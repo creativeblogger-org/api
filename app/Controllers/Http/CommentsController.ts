@@ -3,15 +3,14 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
-import { DateTime } from 'luxon'
 
 export default class CommentsController {
   public async new({ request, response, auth }: HttpContextContract) {
     // Defines the comment schema for the validation.
     const commentSchema = schema.create({
       content: schema.string({ trim: true }, [
-        rules.minLength(200),
-        rules.maxLength(2500),
+        rules.minLength(5),
+        rules.maxLength(200),
       ]),
     })
 
