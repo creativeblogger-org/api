@@ -55,9 +55,11 @@
     "youch-terminal": "^2.2.0"
   },
   "dependencies": {
+    "@adonisjs/ally": "^4.1.5",
     "@adonisjs/auth": "^8.2.3",
     "@adonisjs/core": "^5.8.0",
     "@adonisjs/lucid": "^18.3.0",
+    "@adonisjs/lucid-slugify": "^2.2.1",
     "@adonisjs/repl": "^3.1.0",
     "luxon": "^3.3.0",
     "mysql2": "^3.3.1",

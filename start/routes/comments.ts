@@ -18,15 +18,10 @@
 |
 */
 
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', ({ response }: HttpContextContract) => {
-  return response.json({ status: 'ok' })
-})
-
-import './routes/auth'
-import './routes/comments'
-import './routes/oauth'
-import './routes/posts'
-import './routes/user'
+Route.group(() => {
+  Route.put(':post/comment', 'CommentsController.new').where('post', /^[0-9]$/)
+  Route.post('comments/:id', 'CommentsController.update').where('id', /^[0-9]$/)
+  Route.delete('comments/:id', 'CommentsController.delete').where('id', /^[0-9]$/)
+}).middleware('auth').prefix('/posts')

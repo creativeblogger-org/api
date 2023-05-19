@@ -18,15 +18,11 @@
 |
 */
 
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', ({ response }: HttpContextContract) => {
-  return response.json({ status: 'ok' })
-})
+Route.group(() => {
+  Route.post('register', 'AuthController.register')
+  Route.post('login', 'AuthController.login')
+}).prefix('/auth')
 
-import './routes/auth'
-import './routes/comments'
-import './routes/oauth'
-import './routes/posts'
-import './routes/user'
+Route.get('/auth/logout', 'AuthController.logout').middleware('auth')

@@ -1,13 +1,7 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
 import { column, beforeSave, BaseModel } from '@ioc:Adonis/Lucid/Orm'
-
-enum UserPermissions {
-  User = 1,
-  Blogger = 2,
-  Moderator = 3,
-  Admin = 4
-}
+import Permissions from 'Contracts/Enums/Permissions'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -21,6 +15,9 @@ export default class User extends BaseModel {
 
   @column({ serializeAs: null })
   public password: string
+
+  @column()
+  public permission: Permissions
 
   @column({ serializeAs: null })
   public rememberMeToken: string | null

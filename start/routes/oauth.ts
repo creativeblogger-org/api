@@ -18,15 +18,15 @@
 |
 */
 
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', ({ response }: HttpContextContract) => {
-  return response.json({ status: 'ok' })
-})
+Route.group(() => {
+  Route.get('google', 'Oauth/GoogleController.login')
+  Route.get('google/callback', 'Oauth/GoogleController.callback').as('oauth.google')
 
-import './routes/auth'
-import './routes/comments'
-import './routes/oauth'
-import './routes/posts'
-import './routes/user'
+  Route.get('github', 'Oauth/GithubController.login')
+  Route.get('github/callback', 'Oauth/GithubController.callback').as('oauth.github')
+
+  Route.get('discord', 'Oauth/DiscordController.login')
+  Route.get('discord/callback', 'Oauth/DiscordController.callback').as('oauth.discord')
+}).prefix('/oauth')

@@ -1,10 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, CherryPick, HasMany, ModelObject, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, CherryPick, ModelObject, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
-import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
-import Comment from './Comment'
+import Post from './Post'
 
-export default class Post extends BaseModel {
+export default class Comment extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
@@ -13,21 +12,8 @@ export default class Post extends BaseModel {
   public author: BelongsTo<typeof User>
 
   @column()
-  public title: string
-
-  @column()
-  @slugify({
-    strategy: 'dbIncrement',
-    fields: ['title'],
-  })
-  public slug: string
-
-  @column()
-  @hasMany(() => Comment, {
-    foreignKey: 'post',
-    onQuery: (query) => query.preload('author')
-  })
-  public comments: HasMany<typeof Comment>
+  @belongsTo(() => Post, { foreignKey: 'post' })
+  public post: BelongsTo<typeof Post>
 
   @column()
   public content: string
@@ -53,7 +39,6 @@ export default class Post extends BaseModel {
               ]
             }
           },
-          comments: { fields: { omit: ['post'] } }
         },
       false),
     }
