@@ -9,8 +9,8 @@ export default class CommentsController {
     // Defines the comment schema for the validation.
     const commentSchema = schema.create({
       content: schema.string({ trim: true }, [
-        rules.minLength(200),
-        rules.maxLength(2500),
+        rules.minLength(5),
+        rules.maxLength(200),
       ]),
     })
 
