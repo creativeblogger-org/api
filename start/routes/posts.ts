@@ -22,7 +22,7 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
   Route.get('/', 'PostsController.list')
-  Route.get(':id', 'PostsController.get').where('id', /^[0-9]$/)
+  Route.get(':slug', 'PostsController.get')
 
   Route.group(() => {
     Route.put('new', 'PostsController.new')

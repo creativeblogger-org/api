@@ -48,22 +48,27 @@ export default class AuthController {
 
     // Creation of the user and return connection token.
     await User.create(data)
-    return await auth.use('api').attempt(data.email, data.password)
+    return await auth.use('api').attempt(data.username, data.password)
   }
 
   public async login({ request, response, auth }: HttpContextContract) {
     // Retrieves the essential elements to connect.
-    const { email, username, password } = request.only([
-      'email',
+    const { username, password } = request.only([
       'username',
       'password',
     ])
 
+    // Login the user.
     try {
-      const token = await auth.use('api').attempt(email || username, password)
-      return token
+      return await auth.use('api').attempt(username, password)
     } catch {
-      return response.unauthorized('Identifiants invalides.')
+      return response.unauthorized({
+        errors: [
+          {
+            message: "Les identifiants sont incorrects.",
+          },
+        ],
+      })
     }
   }
 

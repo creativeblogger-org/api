@@ -46,7 +46,7 @@ export default class PostsController {
       .query()
       .preload('author')
       .preload('comments')
-      .where('id', '=', request.param('id'))
+      .where('slug', '=', request.param('slug'))
       .first()
   }
 

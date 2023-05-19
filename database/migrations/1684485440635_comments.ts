@@ -12,12 +12,17 @@ export default class extends BaseSchema {
         .references('users.id')
         .onDelete('CASCADE')
 
+      table
+        .integer('post')
+        .unsigned()
+        .references('posts.id')
+        .onDelete('CASCADE')
       table.text('content').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
-      table.timestamp('created_at', { useTz: true })
+      table.timestamp('created_at', { useTz: true }).defaultTo('0000-00-0000 00:00:00')
       table.timestamp('updated_at', { useTz: true })
     })
   }

@@ -1,40 +1,32 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Permissions from 'Contracts/Enums/Permissions'
 import User from 'App/Models/User'
 
 export default class UsersController {
-  // Returns the user currently logged in.
-  public async me({ auth }: HttpContextContract) {
-    return auth.user!
+  public async list({}: HttpContextContract) {
+    return (await User.all())
+      .map(user => {
+        return user.serialize({
+          fields: {
+            omit: [
+              'email',
+              'created_at',
+              'updated_at',
+            ],
+          },
+        })
+      })
   }
 
-  // Deletes the user.
-  public async delete({ request, response, auth }: HttpContextContract) {
-    const { id } = request.only(['id'])
-    if (id && auth.user!.permission === Permissions.Administrator) {
-      const user = await User.findOrFail(id)
-      await user.delete()
-    } else { 
-      await auth.user!.delete()
-      await auth.logout()
-    }
-
-    return response.noContent()
-  }
-
-  public async update({ request, response, auth }: HttpContextContract) {
-    // Retrieves the essential elements to update.
-    const { email, username, password } = request.only([
-      'email',
-      'username',
-      'password'
-    ])
-
-    // Updates the user.
-    await auth.user!
-      .merge({ email, username, password })
-      .save()
-
-    return response.noContent()
+  public async get({ request }: HttpContextContract) {
+    const username = request.param('username')
+    return (await User.findBy('username', username))?.serialize({
+      fields: {
+        omit: [
+          'email',
+          'created_at',
+          'updated_at',
+        ],
+      },
+    })
   }
 }
