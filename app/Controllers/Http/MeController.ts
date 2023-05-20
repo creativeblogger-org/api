@@ -1,6 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Permissions from 'Contracts/Enums/Permissions'
-import User from 'App/Models/User'
 
 export default class UsersController {
   // Returns the user currently logged in.
@@ -9,16 +7,9 @@ export default class UsersController {
   }
 
   // Deletes the user.
-  public async delete({ request, response, auth }: HttpContextContract) {
-    const { id } = request.only(['id'])
-    if (id && auth.user!.permission === Permissions.Administrator) {
-      const user = await User.findOrFail(id)
-      await user.delete()
-    } else { 
-      await auth.user!.delete()
-      await auth.logout()
-    }
-
+  public async delete({ response, auth }: HttpContextContract) {
+    await auth.user!.delete()
+    await auth.logout()
     return response.noContent()
   }
 

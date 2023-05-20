@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import APIException from 'App/Exceptions/APIException'
 import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
 
@@ -41,16 +42,29 @@ export default class PostsController {
     return await posts
   }
 
-  public async get({ request }: HttpContextContract) {
-    return await Post
+  // Returns the post with the given slug.
+  public async get({ request, auth }: HttpContextContract) {
+    const post = await Post
       .query()
       .preload('author')
       .preload('comments')
       .where('slug', '=', request.param('slug'))
       .first()
+
+    // Check if the post exists.
+    if (!post)
+      throw new APIException('Le post demandé est introuvable.', 404)
+
+    return {
+      ...post.serialize(),
+      has_permission: (auth.user! || {permission: Permissions.User}).permission >= Permissions.Moderator || post.author === auth.user!,
+    }
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
+    if (auth.user!.permission === Permissions.User)
+      throw new APIException('Vous n\'avez pas la permission de créer un article.', 403)
+
     // Defines the post schema for the validation.
     const postSchema = schema.create({
       title: schema.string({ trim: true }, [
@@ -100,9 +114,8 @@ export default class PostsController {
     // Check if the user is the author of the post.
     const post = await Post.findOrFail(request.param('id'))
     if (post.author !== auth.user!
-        && auth.user!.permission === Permissions.User) {
-      return response.unauthorized('Vous n\'êtes pas l\'auteur de cet article.')
-    }
+        && auth.user!.permission === Permissions.User)
+      throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
 
     // Delete the post.
     await post.delete()
@@ -113,9 +126,8 @@ export default class PostsController {
     // Check if the user is the author of the post.
     const post = await Post.findOrFail(request.param('id'))
     if (post.author !== auth.user!
-        && auth.user!.permission === Permissions.User) {
-      return response.unauthorized('Vous n\'êtes pas l\'auteur de cet article.')
-    }
+        && auth.user!.permission === Permissions.User)
+      throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
 
     // Update the post.
     const { title, content } = request.only([

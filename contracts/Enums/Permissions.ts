@@ -1,7 +1,8 @@
 enum Status {
   User = 0,
-  Moderator = 1,
-  Administrator = 2
+  Redactor = 1,
+  Moderator = 2,
+  Administrator = 3
 }
 
 export default Status

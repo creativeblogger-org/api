@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import APIException from 'App/Exceptions/APIException'
 import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
@@ -38,9 +39,8 @@ export default class CommentsController {
     // Check if the user is the author of the comment.
     const comment = await Comment.findOrFail(request.param('id'))
     if (comment.author !== auth.user!
-        && auth.user!.permission === Permissions.User) {
-      return response.unauthorized('Vous n\'êtes pas l\'auteur de ce commentaire.')
-    }
+        && auth.user!.permission === Permissions.User)  
+      throw new APIException('Vous n\'êtes pas l\'auteur de ce commentaire.', 403)
 
     // Delete the comment.
     await comment.delete()
@@ -51,9 +51,8 @@ export default class CommentsController {
     // Check if the user is the author of the comment.
     const comment = await Comment.findOrFail(request.param('id'))
     if (comment.author !== auth.user!
-        && auth.user!.permission === Permissions.User) {
-      return response.unauthorized('Vous n\'êtes pas l\'auteur de ce commentaire.')
-    }
+        && auth.user!.permission === Permissions.User)
+      throw new APIException('Vous n\'êtes pas l\'auteur de ce commentaire.', 403)
 
     // Update the comment.
     const { content } = request.only(['content'])

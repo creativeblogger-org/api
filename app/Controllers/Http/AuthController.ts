@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import APIException from 'App/Exceptions/APIException'
 import User from 'App/Models/User'
 
 export default class AuthController {
@@ -51,7 +52,7 @@ export default class AuthController {
     return await auth.use('api').attempt(data.username, data.password)
   }
 
-  public async login({ request, response, auth }: HttpContextContract) {
+  public async login({ request, auth }: HttpContextContract) {
     // Retrieves the essential elements to connect.
     const { username, password } = request.only([
       'username',
@@ -62,13 +63,7 @@ export default class AuthController {
     try {
       return await auth.use('api').attempt(username, password)
     } catch {
-      return response.unauthorized({
-        errors: [
-          {
-            message: "Les identifiants sont incorrects.",
-          },
-        ],
-      })
+      throw new APIException('Les identifiants sont invalides.', 401)
     }
   }
 
