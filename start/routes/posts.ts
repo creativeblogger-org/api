@@ -26,7 +26,7 @@ Route.group(() => {
 
   Route.group(() => {
     Route.put('new', 'PostsController.new')
-    Route.put(':id', 'PostsController.update').where('id', /^[0-9]$/)
-    Route.delete(':id', 'PostsController.delete').where('id', /^[0-9]$/)
+    Route.put(':id', 'PostsController.update').where('id', /^[0-9]+$/)
+    Route.delete(':id', 'PostsController.delete').where('id', /^[0-9]+$/)
   }).middleware('auth')
 }).prefix('/posts')
