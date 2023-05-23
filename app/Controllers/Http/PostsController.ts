@@ -57,7 +57,7 @@ export default class PostsController {
 
     return {
       ...post.serialize(),
-      has_permission: (auth.user! || {permission: Permissions.User}).permission >= Permissions.Moderator || post.author === auth.user!,
+      has_permission: (auth.user! || { permission: Permissions.User }).permission >= Permissions.Moderator || post.author.id === auth.user!.id,
     }
   }
 
