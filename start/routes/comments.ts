@@ -21,7 +21,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
-  Route.put(':post/comment', 'CommentsController.new').where('post', /^[0-9]$/)
-  Route.post('comments/:id', 'CommentsController.update').where('id', /^[0-9]$/)
-  Route.delete('comments/:id', 'CommentsController.delete').where('id', /^[0-9]$/)
+  Route.put(':post/comment', 'CommentsController.new').where('post', /^[0-9]+$/)
+  Route.post('comments/:id', 'CommentsController.update').where('id', /^[0-9]+$/)
+  Route.delete('comments/:id', 'CommentsController.delete').where('id', /^[0-9]+$/)
 }).middleware('auth').prefix('/posts')
