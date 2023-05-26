@@ -107,23 +107,9 @@ export default class PostsController {
     return response.noContent()
   }
 
-  public async delete({ request, response }: HttpContextContract) {
-    // Check if the user is the author of the post.
-    const post = await Post.find(request.param('id'))
-    if (!post)
-      throw new APIException('Le post demandé est introuvable.', 404)
-
-    if (!post.hasPermission)
-      throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
-
-    // Delete the post.
-    await post.delete()
-    return response.noContent()
-  }
-
   public async update({ request, response }: HttpContextContract) {
-    // Check if the user is the author of the post.
-    const post = await Post.find(request.param('id'))
+    // Check if the post exists.
+    const post = await Post.findBy('slug', request.param('slug'))
     if (!post)
       throw new APIException('Le post demandé est introuvable.', 404)
 
@@ -142,4 +128,20 @@ export default class PostsController {
 
     return response.noContent()
   }
+
+  public async delete({ request, response }: HttpContextContract) {
+    // Check if the post exists.
+    const post = await Post.findBy('slug', request.param('slug'))
+    if (!post)
+      throw new APIException('Le post demandé est introuvable.', 404)
+
+    if (!post.hasPermission)
+      throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
+
+    // Delete the post.
+    await post.delete()
+    return response.noContent()
+  }
+
+ 
 }
