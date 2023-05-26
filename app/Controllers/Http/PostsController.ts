@@ -43,7 +43,7 @@ export default class PostsController {
   }
 
   // Returns the post with the given slug.
-  public async get({ request, auth }: HttpContextContract) {
+  public async get({ request }: HttpContextContract) {
     const post = await Post
       .query()
       .preload('author')
@@ -55,14 +55,11 @@ export default class PostsController {
     if (!post)
       throw new APIException('Le post demandé est introuvable.', 404)
 
-    return {
-      ...post.serialize(),
-      has_permission: (auth.user! || { permission: Permissions.User }).permission >= Permissions.Moderator || post.author.id === auth.user!.id,
-    }
+    return post
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
-    if (auth.user!.permission === Permissions.User)
+    if (auth.user!.permission < Permissions.Redactor)
       throw new APIException('Vous n\'avez pas la permission de créer un article.', 403)
 
     // Defines the post schema for the validation.
@@ -110,11 +107,13 @@ export default class PostsController {
     return response.noContent()
   }
 
-  public async delete({ request, response, auth }: HttpContextContract) {
+  public async delete({ request, response }: HttpContextContract) {
     // Check if the user is the author of the post.
-    const post = await Post.findOrFail(request.param('id'))
-    if (post.author !== auth.user!
-        && auth.user!.permission === Permissions.User)
+    const post = await Post.find(request.param('id'))
+    if (!post)
+      throw new APIException('Le post demandé est introuvable.', 404)
+
+    if (!post.hasPermission)
       throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
 
     // Delete the post.
@@ -122,11 +121,13 @@ export default class PostsController {
     return response.noContent()
   }
 
-  public async update({ request, response, auth }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     // Check if the user is the author of the post.
-    const post = await Post.findOrFail(request.param('id'))
-    if (post.author !== auth.user!
-        && auth.user!.permission === Permissions.User)
+    const post = await Post.find(request.param('id'))
+    if (!post)
+      throw new APIException('Le post demandé est introuvable.', 404)
+
+    if (!post.hasPermission)
       throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
 
     // Update the post.

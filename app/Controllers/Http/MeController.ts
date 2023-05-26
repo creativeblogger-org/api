@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Log from 'App/Models/Log'
 
 export default class UsersController {
   // Returns the user currently logged in.
@@ -27,5 +28,10 @@ export default class UsersController {
       .save()
 
     return response.noContent()
+  }
+
+  // Retrieves the logs of the user.
+  public async logs({ auth }: HttpContextContract) {
+    return await Log.findBy('user', auth.user!.id)
   }
 }

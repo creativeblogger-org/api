@@ -3,7 +3,6 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import APIException from 'App/Exceptions/APIException'
 import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
-import Permissions from 'Contracts/Enums/Permissions'
 
 export default class CommentsController {
   public async new({ request, response, auth }: HttpContextContract) {
@@ -35,11 +34,13 @@ export default class CommentsController {
     return response.noContent()
   }
 
-  public async delete({ request, response, auth }: HttpContextContract) {
+  public async delete({ request, response }: HttpContextContract) {
     // Check if the user is the author of the comment.
-    const comment = await Comment.findOrFail(request.param('id'))
-    if (comment.author !== auth.user!
-        && auth.user!.permission === Permissions.User)  
+    const comment = await Comment.find(request.param('id'))
+    if (!comment)
+      throw new APIException('Le commentaire demandé est introuvable.', 404)
+
+    if (!comment.hasPermission)  
       throw new APIException('Vous n\'êtes pas l\'auteur de ce commentaire.', 403)
 
     // Delete the comment.
@@ -47,11 +48,13 @@ export default class CommentsController {
     return response.noContent()
   }
   
-  public async update({ request, response, auth }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     // Check if the user is the author of the comment.
     const comment = await Comment.findOrFail(request.param('id'))
-    if (comment.author !== auth.user!
-        && auth.user!.permission === Permissions.User)
+    if (!comment)
+      throw new APIException('Le commentaire demandé est introuvable.', 404)
+
+    if (!comment.hasPermission)
       throw new APIException('Vous n\'êtes pas l\'auteur de ce commentaire.', 403)
 
     // Update the comment.
