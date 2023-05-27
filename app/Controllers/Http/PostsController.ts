@@ -26,9 +26,9 @@ export default class PostsController {
 
     let posts = Post
       .query()
+      .orderBy('created_at', 'desc')
       .preload('author')
-      .preload('comments')
-    
+
     if (data.limit && !data.page) {
       await posts.limit(data.limit)
     }
@@ -39,6 +39,7 @@ export default class PostsController {
         .limit(data.limit)
     }
     
+    (await posts).map((post) => post.serializeAttributes({ omit: ['comments'] }))
     return await posts
   }
 
