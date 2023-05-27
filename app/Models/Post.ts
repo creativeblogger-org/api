@@ -42,9 +42,14 @@ export default class Post extends BaseModel {
 
   @computed({ serializeAs: 'has_permission' })
   public get hasPermission() {
-    const { user } = HttpContext.get()!.auth
-    return Number(this.author) === user!.id
-      || user!.permission >= Permissions.Moderator
+    const user = HttpContext.get()!.auth.user
+      || {
+        id: 0,
+        permission: Permissions.User
+      }
+
+    return Number(this.author) === user.id
+      || user.permission >= Permissions.Moderator
   }
 
   public serialize(cherryPick?: CherryPick | undefined): ModelObject {
@@ -62,7 +67,7 @@ export default class Post extends BaseModel {
               ]
             }
           },
-          comments: { fields: { omit: ['post'] } }
+          comments: { fields: { omit: ['post'] } },
         },
       false),
     }

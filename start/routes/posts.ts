@@ -28,5 +28,7 @@ Route.group(() => {
     Route.post('/', 'PostsController.new')
     Route.patch(':slug', 'PostsController.update')
     Route.delete(':slug', 'PostsController.delete')
+
+    Route.post(':slug/comment', 'CommentsController.new')
   }).middleware('auth')
 }).prefix('/posts')
