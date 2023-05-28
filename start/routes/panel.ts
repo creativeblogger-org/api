@@ -23,6 +23,7 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.get('/', 'PanelController.list')
   Route.get(':slug', 'PostsController.get')
+  Route.get('/user', 'UsersController.list')
 })
   .middleware('auth')
   .prefix('/panel')
