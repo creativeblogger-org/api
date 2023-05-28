@@ -26,7 +26,7 @@ Route.group(() => {
 
   Route.group(() => {
     Route.post('/', 'PostsController.new')
-    Route.patch(':slug', 'PostsController.update')
+    Route.put(':slug', 'PostsController.update')
     Route.delete(':slug', 'PostsController.delete')
 
     Route.post(':slug/comment', 'CommentsController.new')

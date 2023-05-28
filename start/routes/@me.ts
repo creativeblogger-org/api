@@ -20,10 +20,12 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.group(() => { 
+Route.group(() => {
   Route.get('/', 'MeController.me')
-  Route.patch('/', 'MeController.update')
+  Route.put('/', 'MeController.update')
   Route.delete('/', 'MeController.delete')
 
   Route.get('logs', 'MeController.logs')
-}).middleware('auth').prefix('/@me')
+})
+  .middleware('auth')
+  .prefix('/@me')
