@@ -1,9 +1,13 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import APIException from 'App/Exceptions/APIException'
 import Post from 'App/Models/Post'
 
 export default class PanelController {
-  public async list({ request }: HttpContextContract) {
+  public async list({ request, auth }: HttpContextContract) {
+    if (auth.user?.permission != 2) {
+      throw new APIException("Vous n'avez pas la permission requise", 404)
+    }
     const data = await request.validate({
       schema: schema.create({
         limit: schema.number.optional([rules.above(0)]),

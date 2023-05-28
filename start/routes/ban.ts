@@ -21,7 +21,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
-  Route.post('ban', 'BanController.ban')
-}).prefix('/auth')
-
-Route.get('/auth/logout', 'AuthController.logout').middleware('auth')
+  Route.post('/', 'BanController.ban')
+})
+  .middleware('auth')
+  .prefix('/ban')

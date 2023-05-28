@@ -31,4 +31,4 @@ Route.group(() => {
 
     Route.post(':slug/comment', 'CommentsController.new')
   }).middleware('auth')
-}).prefix('/posts')
+}).prefix('/panel')
