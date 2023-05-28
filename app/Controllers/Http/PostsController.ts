@@ -35,7 +35,7 @@ export default class PostsController {
 
     if (data.limit && data.page) {
       await posts
-        .offset(data.limit * (data.page - 1))
+        .offset(data.limit * data.page)
         .limit(data.limit)
     }
     
