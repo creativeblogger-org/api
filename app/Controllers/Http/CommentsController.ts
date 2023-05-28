@@ -24,8 +24,8 @@ export default class CommentsController {
       schema: commentSchema,
       messages: {
         'content.required': 'Le contenu est requis.',
-        'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
-        'content.maxLength': 'Le contenu doit faire au maximum 2500 caractères.',
+        'content.minLength': 'Le contenu doit faire au moins 5 caractères.',
+        'content.maxLength': 'Le contenu doit faire au maximum 200 caractères.',
       },
     })
 
