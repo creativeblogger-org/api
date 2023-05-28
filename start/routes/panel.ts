@@ -24,5 +24,3 @@ Route.group(() => {
   Route.get('/', 'PanelController.list')
   Route.get(':slug', 'PostsController.get')
 }).prefix('/panel')
-
-Route.get('/getallusers', 'UsersController.list')

@@ -23,4 +23,5 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.get('/', 'UsersController.list')
   Route.get(':username', 'UsersController.get')
+  Route.delete(':username', 'UserController.delete')
 }).prefix('/users')
