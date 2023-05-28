@@ -6,7 +6,7 @@ import Post from 'App/Models/Post'
 export default class PanelController {
   public async list({ request, auth }: HttpContextContract) {
     if (auth.user?.permission != 2) {
-      throw new APIException("Vous n'avez pas la permission requise", 404)
+      throw new APIException("Vous n'avez pas la permission requise", 403)
     }
     const data = await request.validate({
       schema: schema.create({

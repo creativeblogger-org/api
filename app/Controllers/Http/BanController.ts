@@ -6,7 +6,7 @@ export default class BanController {
     if (auth.user?.permission == 2) {
       return response.noContent()
     } else {
-      throw new APIException("Vous n'avez pas la permission de bannir des utilisateurs", 404)
+      throw new APIException("Vous n'avez pas la permission de bannir des utilisateurs", 403)
     }
   }
 }

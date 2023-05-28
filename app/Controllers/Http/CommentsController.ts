@@ -26,7 +26,7 @@ export default class CommentsController {
     })
 
     if (auth.user?.permission == 0) {
-      throw new APIException("Vous n'avez pas la permission de créer des posts")
+      throw new APIException("Vous n'avez pas la permission de créer des posts", 403)
     }
 
     // Save the comment in the database.
