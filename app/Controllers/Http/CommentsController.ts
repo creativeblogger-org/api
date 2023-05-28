@@ -8,15 +8,11 @@ export default class CommentsController {
   public async new({ request, response, auth }: HttpContextContract) {
     // Check if the post exists.
     const post = await Post.findBy('slug', request.param('slug'))
-    if (!post)
-      throw new APIException('Le post demandé est introuvable.', 404)
-    
+    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
+
     // Defines the comment schema for the validation.
     const commentSchema = schema.create({
-      content: schema.string({ trim: true }, [
-        rules.minLength(5),
-        rules.maxLength(200),
-      ]),
+      content: schema.string({ trim: true }, [rules.minLength(5), rules.maxLength(200)]),
     })
 
     // Validate the provided data.
@@ -28,6 +24,10 @@ export default class CommentsController {
         'content.maxLength': 'Le contenu doit faire au maximum 200 caractères.',
       },
     })
+
+    if (auth.user?.permission == 0) {
+      throw new APIException("Vous n'avez pas la permission de créer des posts")
+    }
 
     // Save the comment in the database.
     const comment = new Comment()
@@ -42,17 +42,14 @@ export default class CommentsController {
   public async update({ request, response }: HttpContextContract) {
     // Check if the user is the author of the comment.
     const comment = await Comment.findBy('slug', request.param('slug'))
-    if (!comment)
-      throw new APIException('Le commentaire demandé est introuvable.', 404)
+    if (!comment) throw new APIException('Le commentaire demandé est introuvable.', 404)
 
     if (!comment.hasPermission)
-      throw new APIException('Vous n\'êtes pas l\'auteur de ce commentaire.', 403)
+      throw new APIException("Vous n'êtes pas l'auteur de ce commentaire.", 403)
 
     // Update the comment.
     const { content } = request.only(['content'])
-    await comment
-      .merge({ content })
-      .save()
+    await comment.merge({ content }).save()
 
     return response.noContent()
   }
@@ -60,11 +57,10 @@ export default class CommentsController {
   public async delete({ request, response }: HttpContextContract) {
     // Check if the user is the author of the comment.
     const comment = await Comment.findBy('slug', request.param('slug'))
-    if (!comment)
-      throw new APIException('Le commentaire demandé est introuvable.', 404)
+    if (!comment) throw new APIException('Le commentaire demandé est introuvable.', 404)
 
-    if (!comment.hasPermission)  
-      throw new APIException('Vous n\'êtes pas l\'auteur de ce commentaire.', 403)
+    if (!comment.hasPermission)
+      throw new APIException("Vous n'êtes pas l'auteur de ce commentaire.", 403)
 
     // Delete the comment.
     await comment.delete()
