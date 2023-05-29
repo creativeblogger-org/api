@@ -115,7 +115,7 @@ export default class PostsController {
       throw new APIException('Le post demandé est introuvable.', 404)
 
     if (!post.hasPermission)
-      throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
+      throw new APIException('Vous n\'avez pas la permission de modifier cet article.', 403)
 
     // Update the post.
     const { title, content } = request.only([
