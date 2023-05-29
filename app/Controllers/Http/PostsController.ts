@@ -8,77 +8,57 @@ export default class PostsController {
   public async list({ request }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({
-        limit: schema.number.optional([
-          rules.above(0),
-        ]),
-        page: schema.number.optional([
-          rules.above(0)
-        ]),
+        limit: schema.number.optional([rules.above(0)]),
+        page: schema.number.optional([rules.above(0)]),
       }),
       messages: {
-        'limit.number': 'La limite d\'articles doit être un nombre.',
-        'limit.above': 'La limite d\'articles doit être supérieure à 0.',
+        'limit.number': "La limite d'articles doit être un nombre.",
+        'limit.above': "La limite d'articles doit être supérieure à 0.",
 
         'page.number': 'Le numéro de page doit être un nombre.',
         'page.above': 'Le numéro de page doit être supérieur à 0.',
       },
     })
 
-    let posts = Post
-      .query()
-      .orderBy('created_at', 'desc')
-      .preload('author')
+    let posts = Post.query().orderBy('created_at', 'desc').preload('author')
 
     if (data.limit && !data.page) {
       await posts.limit(data.limit)
     }
 
     if (data.limit && data.page) {
-      await posts
-        .offset(data.limit * data.page)
-        .limit(data.limit)
+      await posts.offset(data.limit * data.page).limit(data.limit)
     }
-    
-    (await posts).map((post) => post.serializeAttributes({ omit: ['comments'] }))
+
+    ;(await posts).map((post) => post.serializeAttributes({ omit: ['comments'] }))
     return await posts
   }
 
   // Returns the post with the given slug.
   public async get({ request }: HttpContextContract) {
-    const post = await Post
-      .query()
+    const post = await Post.query()
       .preload('author')
       .preload('comments')
       .where('slug', '=', request.param('slug'))
       .first()
 
     // Check if the post exists.
-    if (!post)
-      throw new APIException('Le post demandé est introuvable.', 404)
+    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
     return post
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
     if (auth.user!.permission < Permissions.Redactor)
-      throw new APIException('Vous n\'avez pas la permission de créer un article.', 403)
+      throw new APIException("Vous n'avez pas la permission de créer un article.", 403)
 
     // Defines the post schema for the validation.
     const postSchema = schema.create({
-      title: schema.string({ trim: true }, [
-        rules.minLength(3),
-        rules.maxLength(30),
-      ]),
+      title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
-      content: schema.string({ trim: true }, [
-        rules.minLength(200),
-        rules.maxLength(2500),
-      ]),
+      content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(2500)]),
 
-      slug: schema.string.optional({ trim: true }, [
-        rules.minLength(3),
-        rules.maxLength(30)
-      ]),
+      slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
     })
 
     // Validate the provided data.
@@ -111,21 +91,15 @@ export default class PostsController {
   public async update({ request, response }: HttpContextContract) {
     // Check if the post exists.
     const post = await Post.findBy('slug', request.param('slug'))
-    if (!post)
-      throw new APIException('Le post demandé est introuvable.', 404)
+    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
     if (!post.hasPermission)
-      throw new APIException('Vous n\'avez pas la permission de modifier cet article.', 403)
+      throw new APIException("Vous n'avez pas la permission de modifier cet article.", 403)
 
     // Update the post.
-    const { title, content } = request.only([
-      'title',
-      'content',
-    ])
+    const { title, content } = request.only(['title', 'content'])
 
-    await post
-      .merge({ title, content })
-      .save()
+    await post.merge({ title, content }).save()
 
     return response.noContent()
   }
@@ -133,11 +107,9 @@ export default class PostsController {
   public async delete({ request, response }: HttpContextContract) {
     // Check if the post exists.
     const post = await Post.findBy('slug', request.param('slug'))
-    if (!post)
-      throw new APIException('Le post demandé est introuvable.', 404)
+    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
-    if (!post.hasPermission)
-      throw new APIException('Vous n\'êtes pas l\'auteur de cet article.', 403)
+    if (!post.hasPermission) throw new APIException("Vous n'êtes pas l'auteur de cet article.", 403)
 
     // Delete the post.
     await post.delete()
