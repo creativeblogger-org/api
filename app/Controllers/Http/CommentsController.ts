@@ -41,7 +41,7 @@ export default class CommentsController {
 
   public async update({ request, response }: HttpContextContract) {
     // Check if the user is the author of the comment.
-    const comment = await Comment.findBy('slug', request.param('slug'))
+    const comment = await Comment.findByOrFail('slug', request.param('slug'))
     if (!comment) throw new APIException('Le commentaire demandé est introuvable.', 404)
 
     if (!comment.hasPermission)
@@ -56,7 +56,7 @@ export default class CommentsController {
 
   public async delete({ request, response }: HttpContextContract) {
     // Check if the user is the author of the comment.
-    const comment = await Comment.findBy('slug', request.param('slug'))
+    const comment = await Comment.findByOrFail('slug', request.param('slug'))
     if (!comment) throw new APIException('Le commentaire demandé est introuvable.', 404)
 
     if (!comment.hasPermission)
