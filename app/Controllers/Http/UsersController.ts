@@ -46,10 +46,4 @@ export default class UsersController {
     await user.delete()
     return response.noContent()
   }
-
-  public async iswriter({ auth }: HttpContextContract) {
-    if (auth.user?.permission === 0) {
-      throw new APIException('Seul un rédacteur / administrateur peut créer un nouvel article', 403)
-    }
-  }
 }
