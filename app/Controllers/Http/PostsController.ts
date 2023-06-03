@@ -56,7 +56,7 @@ export default class PostsController {
     const postSchema = schema.create({
       title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
-      content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(2500)]),
+      content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(10000)]),
 
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
     })
