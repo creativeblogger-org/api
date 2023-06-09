@@ -14,7 +14,7 @@ export default class UsersController {
     return (await User.all()).map((user) => {
       return user.serialize({
         fields: {
-          omit: ['email', 'created_at', 'updated_at'],
+          omit: ['email', 'password'],
         },
       })
     })
@@ -27,7 +27,7 @@ export default class UsersController {
 
     return user.serialize({
       fields: {
-        omit: ['email', 'created_at', 'updated_at'],
+        omit: ['email', 'password'],
       },
     })
   }
