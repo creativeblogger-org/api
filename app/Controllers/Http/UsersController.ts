@@ -46,4 +46,17 @@ export default class UsersController {
     await user.delete()
     return response.noContent()
   }
+
+  public async writer({ request, response, auth }: HttpContextContract) {
+    const { username } = request.param('username')
+    const { permission } = request.param('permission')
+
+    if (auth.user?.permission !== 2) {
+      throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
+    }
+
+    await username.merge({ permission }).save()
+
+    return response.noContent()
+  }
 }
