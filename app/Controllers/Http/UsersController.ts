@@ -34,12 +34,12 @@ export default class UsersController {
 
   public async delete({ request, response, auth }: HttpContextContract) {
     // Checks the user's permission.
-    const { username } = request.param('username')
+    // const { username } = request.param('username')
     if (auth.user?.permission !== 2)
       throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
 
     // Deletes the user.
-    const user = await User.findByOrFail('username', username)
+    const user: any = await User.findBy('username', request.param('username'))
     if (user.permission === 2) {
       throw new APIException('Vous ne pouvez pas supprimer un administrateur !', 403)
     }
