@@ -1,5 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, CherryPick, ModelObject, belongsTo, column, computed } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  BelongsTo,
+  CherryPick,
+  ModelObject,
+  belongsTo,
+  column,
+  computed,
+} from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import Post from './Post'
 import HttpContext from '@ioc:Adonis/Core/HttpContext'
@@ -28,14 +36,12 @@ export default class Comment extends BaseModel {
 
   @computed({ serializeAs: 'has_permission' })
   public get hasPermission() {
-    const user = HttpContext.get()!.auth.user
-      || {
-        id: 0,
-        permission: Permissions.User
-      }
+    const user = HttpContext.get()!.auth.user || {
+      id: 0,
+      permission: Permissions.User,
+    }
 
-    return Number(this.author) === user.id
-      || user.permission >= Permissions.Moderator
+    return Number(this.author) === user.id || user.permission >= Permissions.Moderator
   }
 
   public serialize(cherryPick?: CherryPick | undefined): ModelObject {
@@ -46,15 +52,12 @@ export default class Comment extends BaseModel {
         {
           author: {
             fields: {
-              omit: [
-                'email',
-                'created_at',
-                'updated_at'
-              ]
-            }
+              omit: ['email', 'created_at', 'updated_at'],
+            },
           },
         },
-      false),
+        false
+      ),
     }
   }
 }

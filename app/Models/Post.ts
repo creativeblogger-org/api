@@ -1,5 +1,15 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, CherryPick, HasMany, ModelObject, belongsTo, column, computed, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  BelongsTo,
+  CherryPick,
+  HasMany,
+  ModelObject,
+  belongsTo,
+  column,
+  computed,
+  hasMany,
+} from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import Comment from './Comment'
@@ -18,6 +28,9 @@ export default class Post extends BaseModel {
   public title: string
 
   @column()
+  public description: string
+
+  @column()
   @slugify({
     strategy: 'dbIncrement',
     fields: ['title'],
@@ -27,7 +40,7 @@ export default class Post extends BaseModel {
   @column()
   @hasMany(() => Comment, {
     foreignKey: 'post',
-    onQuery: (query) => query.preload('author')
+    onQuery: (query) => query.preload('author'),
   })
   public comments: HasMany<typeof Comment>
 
@@ -42,14 +55,12 @@ export default class Post extends BaseModel {
 
   @computed({ serializeAs: 'has_permission' })
   public get hasPermission() {
-    const user = HttpContext.get()!.auth.user
-      || {
-        id: 0,
-        permission: Permissions.User
-      }
+    const user = HttpContext.get()!.auth.user || {
+      id: 0,
+      permission: Permissions.User,
+    }
 
-    return Number(this.author) === user.id
-      || user.permission >= Permissions.Moderator
+    return Number(this.author) === user.id || user.permission >= Permissions.Moderator
   }
 
   public serialize(cherryPick?: CherryPick | undefined): ModelObject {
@@ -60,16 +71,13 @@ export default class Post extends BaseModel {
         {
           author: {
             fields: {
-              omit: [
-                'email',
-                'created_at',
-                'updated_at'
-              ]
-            }
+              omit: ['email', 'created_at', 'updated_at'],
+            },
           },
           comments: { fields: { omit: ['post'] } },
         },
-      false),
+        false
+      ),
     }
   }
 }

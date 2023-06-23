@@ -58,6 +58,8 @@ export default class PostsController {
 
       content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(10000)]),
 
+      description: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(100)]),
+
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
     })
 
@@ -66,6 +68,10 @@ export default class PostsController {
       schema: postSchema,
       messages: {
         'title.required': 'Le titre est requis.',
+        'description.required': 'La description de cet article est requise.',
+        'description.minLength': 'La description de cet article doit faire au moins 10 caractères.',
+        'description.naxLength':
+          'La description de cet article doit faire au maximum 100 caractères.',
         'title.minLength': 'Le titre doit faire au moins 3 caractères.',
         'title.maxLength': 'Le titre doit faire au maximum 30 caractères.',
 
