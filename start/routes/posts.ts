@@ -23,6 +23,7 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.get('/', 'PostsController.list')
   Route.get(':slug', 'PostsController.get')
+  Route.get('/tag/:tags', 'PostsController.getByTag')
 
   Route.group(() => {
     Route.post('/', 'PostsController.new')

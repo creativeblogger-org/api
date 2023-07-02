@@ -60,6 +60,8 @@ export default class PostsController {
 
       description: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(100)]),
 
+      tags: schema.string({ trim: true }),
+
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
     })
 
@@ -68,12 +70,16 @@ export default class PostsController {
       schema: postSchema,
       messages: {
         'title.required': 'Le titre est requis.',
+
         'description.required': 'La description de cet article est requise.',
         'description.minLength': 'La description de cet article doit faire au moins 10 caractères.',
         'description.naxLength':
           'La description de cet article doit faire au maximum 100 caractères.',
+
         'title.minLength': 'Le titre doit faire au moins 3 caractères.',
         'title.maxLength': 'Le titre doit faire au maximum 30 caractères.',
+
+        'tags.required': 'Vous devez ajouter un tag à votre article.',
 
         'content.required': 'Le contenu est requis.',
         'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
@@ -120,5 +126,13 @@ export default class PostsController {
     // Delete the post.
     await post.delete()
     return response.noContent()
+  }
+
+  public async getByTag({ request }) {
+    const post = await Post.query().where('tags', '=', request.param('tags'))
+
+    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
+
+    return post
   }
 }
