@@ -5,7 +5,7 @@ import APIException from 'App/Exceptions/APIException'
 export default class UsersController {
   // Get all users registered.
   public async list({ auth }: HttpContextContract) {
-    if (auth.user?.permission !== 2 || 3) {
+    if (auth.user?.permission !== 3) {
       throw new APIException(
         "Vous n'avez pas la permission de visualiser l'ensemble des utilisateurs",
         403
