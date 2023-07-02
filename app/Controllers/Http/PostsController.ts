@@ -60,7 +60,7 @@ export default class PostsController {
 
       description: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(100)]),
 
-      tags: schema.string({ trim: true }),
+      tags: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(15)]),
 
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
     })
@@ -80,6 +80,8 @@ export default class PostsController {
         'title.maxLength': 'Le titre doit faire au maximum 30 caractères.',
 
         'tags.required': 'Vous devez ajouter un tag à votre article.',
+        'tags.minLength': 'Tag trop court',
+        'tags.maxLength': 'Tag trop long',
 
         'content.required': 'Le contenu est requis.',
         'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
@@ -93,6 +95,8 @@ export default class PostsController {
     // Save the post in the database.
     const post = new Post()
     post.title = data.title
+    post.description = data.description
+    post.tags = data.tags
     post.content = data.content
     await post.related('author').associate(auth.user!)
     await post.save()
