@@ -35,13 +35,13 @@ export default class UsersController {
   public async delete({ request, response, auth }: HttpContextContract) {
     // Checks the user's permission.
     // const { username } = request.param('username')
-    if (auth.user?.permission !== 2)
+    if (auth.user?.permission !== 3)
       throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
 
     // Deletes the user.
     const user: any = await User.findBy('username', request.param('username'))
-    if (user.permission === 2) {
-      throw new APIException('Vous ne pouvez pas supprimer un administrateur !', 403)
+    if (user.permission === 3 || 2) {
+      throw new APIException('Vous ne pouvez pas supprimer un administrateur / modérateur !', 403)
     }
     await user.delete()
     return response.noContent()
@@ -51,7 +51,7 @@ export default class UsersController {
     const { username } = request.param('username')
     const { permission } = request.param('permission')
 
-    if (auth.user?.permission !== 2) {
+    if (auth.user?.permission !== 3) {
       throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
     }
 

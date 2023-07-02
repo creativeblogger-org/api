@@ -3,7 +3,7 @@ import APIException from 'App/Exceptions/APIException'
 
 export default class VerifController {
   public async iswriter({ auth }: HttpContextContract) {
-    if (auth.user?.permission === 0) {
+    if (auth.user?.permission === 0 || 1) {
       throw new APIException('Seul un rédacteur peut créer un nouvel article !')
     }
   }

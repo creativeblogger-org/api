@@ -10,7 +10,7 @@ export default class UsersController {
 
   // Deletes the user.
   public async delete({ response, auth }: HttpContextContract) {
-    if (auth.user?.permission === 2) {
+    if (auth.user?.permission === 3) {
       throw new APIException(
         'Vous êtes un administrateur, votre compte ne peut pas être supprimé !',
         403
