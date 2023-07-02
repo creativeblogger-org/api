@@ -133,7 +133,10 @@ export default class PostsController {
   }
 
   public async getByTag({ request }) {
-    const post = await Post.query().where('tags', '=', request.param('tags'))
+    const post = await Post.query()
+      .orderBy('created_at', 'desc')
+      .preload('author')
+      .where('tags', '=', request.param('tags'))
 
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
