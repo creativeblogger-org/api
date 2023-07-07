@@ -63,6 +63,8 @@ export default class PostsController {
       tags: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(15)]),
 
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
+
+      image: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(100)]),
     })
 
     // Validate the provided data.
@@ -89,6 +91,9 @@ export default class PostsController {
 
         'slug.minLength': 'Le slug doit faire au moins 3 caractères.',
         'slug.maxLength': 'Le slug doit faire au maximum 30 caractères.',
+
+        'image.minLength': 'Le lien doit faire au moins 3 caractères.',
+        'image.maxLength': 'Le lien doit faire maximum 100 caractères.',
       },
     })
 

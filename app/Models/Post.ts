@@ -31,6 +31,9 @@ export default class Post extends BaseModel {
   public description: string
 
   @column()
+  public image: string
+
+  @column()
   public tags: string
 
   @column()
