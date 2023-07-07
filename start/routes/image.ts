@@ -23,6 +23,4 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.get('/', 'ImageController.get')
   Route.post('/', 'ImageController.upload')
-})
-  .middleware('auth')
-  .prefix('/image')
+}).prefix('/image')
