@@ -1,31 +1,25 @@
-import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import APIException from 'App/Exceptions/APIException'
 
 export default class ImageController {
   public async upload({ request }: HttpContextContract) {
-    const coverImage = request.file('cover_image', {
+    const coverImage = request.file('image', {
       size: '10mb',
       extnames: ['jpg', 'png', 'gif'],
     })
 
     if (!coverImage) {
-      return
+      return new APIException('Il faut une image !')
     }
 
     if (!coverImage.isValid) {
       return coverImage.errors
     }
 
-    await coverImage.moveToDisk('./')
+    await coverImage.moveToDisk('/')
 
-    await coverImage.move(Application.tmpPath('uploads'))
-  }
+    await coverImage.move('/')
 
-  public async get({ request }: HttpContextContract) {
-    const images = request.files('images')
-
-    for (let image of images) {
-      await image.move(Application.tmpPath('uploads'))
-    }
+    return 'YEAH'
   }
 }
