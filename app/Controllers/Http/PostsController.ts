@@ -143,7 +143,7 @@ export default class PostsController {
       .preload('author')
       .where('tags', '=', request.param('tags'))
 
-    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
+    if (!post) throw new APIException('Le tag ne contient aucun post', 404)
 
     return post
   }
@@ -154,7 +154,7 @@ export default class PostsController {
       .preload('author')
       .where('author', '=', request.param('username'))
 
-    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
+    if (!post) throw new APIException("L'utilisateur n'a pas écrit d'articles", 404)
 
     return post
   }

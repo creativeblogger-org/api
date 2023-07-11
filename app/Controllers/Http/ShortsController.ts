@@ -92,4 +92,15 @@ export default class ShortsController {
     await short.delete()
     return response.noContent()
   }
+
+  public async getByUsername({ request }) {
+    const shorts = await Shorts.query()
+      .orderBy('created_at', 'desc')
+      .preload('author')
+      .where('author', '=', request.param('username'))
+
+    if (!shorts) throw new APIException("L'utilisateur n'a pas écrit de shorts", 404)
+
+    return shorts
+  }
 }
