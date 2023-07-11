@@ -87,7 +87,7 @@ export default class PostsController {
 
         'content.required': 'Le contenu est requis.',
         'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
-        'content.maxLength': 'Le contenu doit faire au maximum 2500 caractères.',
+        'content.maxLength': 'Le contenu doit faire au maximum 10000 caractères.',
 
         'slug.minLength': 'Le slug doit faire au moins 3 caractères.',
         'slug.maxLength': 'Le slug doit faire au maximum 30 caractères.',
@@ -142,6 +142,17 @@ export default class PostsController {
       .orderBy('created_at', 'desc')
       .preload('author')
       .where('tags', '=', request.param('tags'))
+
+    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
+
+    return post
+  }
+
+  public async getByUsername({ request }) {
+    const post = await Post.query()
+      .orderBy('created_at', 'desc')
+      .preload('author')
+      .where('author', '=', request.param('username'))
 
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 

@@ -24,6 +24,7 @@ Route.group(() => {
   Route.get('/', 'PostsController.list')
   Route.get(':slug', 'PostsController.get')
   Route.get('/tag/:tags', 'PostsController.getByTag')
+  Route.get('/username/:username', 'PostsController.getByUsername')
 
   Route.group(() => {
     Route.post('/', 'PostsController.new')

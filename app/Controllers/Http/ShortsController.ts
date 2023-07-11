@@ -1,9 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import APIException from 'App/Exceptions/APIException'
-import Post from 'App/Models/Post'
 import Shorts from 'App/Models/Shorts'
-import Permissions from 'Contracts/Enums/Permissions'
 
 export default class ShortsController {
   public async list({ request }: HttpContextContract) {
@@ -21,7 +19,7 @@ export default class ShortsController {
       },
     })
 
-    let shorts = Shorts.query().orderBy('created_at', 'desc').preload('author')
+    let shorts = Shorts.query().orderBy('created_at', 'asc').preload('author')
 
     if (data.limit && !data.page) {
       await shorts.limit(data.limit)
@@ -36,9 +34,6 @@ export default class ShortsController {
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
-    if (auth.user!.permission < Permissions.Redactor)
-      throw new APIException("Vous n'avez pas la permission de créer un shorts.", 403)
-
     // Defines the post schema for the validation.
     const shortsSchema = schema.create({
       title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
@@ -55,8 +50,8 @@ export default class ShortsController {
         'title.maxLength': 'Le titre doit faire au maximum 30 caractères.',
 
         'content.required': 'Le contenu est requis.',
-        'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
-        'content.maxLength': 'Le contenu doit faire au maximum 2500 caractères.',
+        'content.minLength': 'Le contenu doit faire au moins 10 caractères.',
+        'content.maxLength': 'Le contenu doit faire au maximum 200 caractères.',
       },
     })
 
@@ -96,16 +91,5 @@ export default class ShortsController {
     // Delete the post.
     await short.delete()
     return response.noContent()
-  }
-
-  public async getByTag({ request }) {
-    const post = await Post.query()
-      .orderBy('created_at', 'desc')
-      .preload('author')
-      .where('tags', '=', request.param('tags'))
-
-    if (!post) throw new APIException('Le post demandé est introuvable.', 404)
-
-    return post
   }
 }
