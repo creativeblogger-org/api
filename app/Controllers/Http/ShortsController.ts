@@ -19,7 +19,7 @@ export default class ShortsController {
       },
     })
 
-    let shorts = Shorts.query().orderBy('created_at', 'asc').preload('author')
+    let shorts = Shorts.query().orderBy('created_at', 'desc').preload('author')
 
     if (data.limit && !data.page) {
       await shorts.limit(data.limit)
