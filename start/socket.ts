@@ -4,7 +4,7 @@ Ws.boot()
 Ws.io.on('connection', (socket) => {
   socket.emit('connected', 'slt')
 
-  socket.on('ok', (data: string) => {
+  socket.on('ok', (data) => {
     console.log(data)
   })
 })
