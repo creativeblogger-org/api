@@ -2,9 +2,11 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import APIException from 'App/Exceptions/APIException'
 import Shorts from 'App/Models/Shorts'
+import { DateTime } from 'luxon'
 
 export default class ShortsController {
   public async list({ request }: HttpContextContract) {
+    const expirationDate = DateTime.local().minus({ days: 1 }) // Date d'expiration = maintenant - 24 heures
     const data = await request.validate({
       schema: schema.create({
         limit: schema.number.optional([rules.above(0)]),
@@ -20,6 +22,7 @@ export default class ShortsController {
     })
 
     let shorts = Shorts.query().orderBy('created_at', 'desc').preload('author')
+    await Shorts.query().whereRaw('created_at < ?', [expirationDate.toSQL()]).delete()
 
     if (data.limit && !data.page) {
       await shorts.limit(data.limit)
@@ -59,6 +62,7 @@ export default class ShortsController {
     const shorts = new Shorts()
     shorts.title = data.title
     shorts.content = data.content
+    shorts.expiresAt = DateTime.local().plus({ days: 1 }) // Définit la date d'expiration à 24 heures à partir de maintenant
     await shorts.related('author').associate(auth.user!)
     await shorts.save()
 

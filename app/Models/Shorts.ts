@@ -38,6 +38,9 @@ export default class Shorts extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
+  @column.dateTime({ serializeAs: null })
+  public expiresAt: DateTime
+
   @computed({ serializeAs: 'has_permission' })
   public get hasPermission() {
     const user = HttpContext.get()!.auth.user || {
