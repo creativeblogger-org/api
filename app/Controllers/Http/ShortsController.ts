@@ -7,6 +7,7 @@ import { DateTime } from 'luxon'
 export default class ShortsController {
   public async list({ request }: HttpContextContract) {
     const expirationDate = DateTime.local().minus({ days: 1 }) // Date d'expiration = maintenant - 24 heures
+    const expirationDateString = expirationDate.toFormat('yyyy-MM-dd HH:mm:ss')
     const data = await request.validate({
       schema: schema.create({
         limit: schema.number.optional([rules.above(0)]),
@@ -22,7 +23,7 @@ export default class ShortsController {
     })
 
     let shorts = Shorts.query().orderBy('created_at', 'desc').preload('author')
-    await Shorts.query().whereRaw('created_at < ?', [expirationDate.toSQL()]).delete()
+    await Shorts.query().whereRaw('created_at < ?', [expirationDateString]).delete()
 
     if (data.limit && !data.page) {
       await shorts.limit(data.limit)
