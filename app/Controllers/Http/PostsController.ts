@@ -158,4 +158,16 @@ export default class PostsController {
 
     return post
   }
+
+  public async getByContent({ request }) {
+    const searchText = request.param('content')
+    const posts = await Post.query()
+      .orderBy('created_at', 'desc')
+      .preload('author')
+      .where('title', 'like', `%${searchText}%`)
+
+    if (!posts) throw new APIException("L'utilisateur n'a pas écrit d'articles", 404)
+
+    return posts
+  }
 }
