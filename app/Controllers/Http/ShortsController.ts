@@ -6,7 +6,7 @@ import { DateTime } from 'luxon'
 
 export default class ShortsController {
   public async list({ request }: HttpContextContract) {
-    const expirationDate = DateTime.local().minus({ days: 1 }) // Date d'expiration = maintenant - 24 heures
+    const expirationDate = DateTime.local().minus({ days: 3 }) // Date d'expiration = maintenant - 72 heures
     const expirationDateString = expirationDate.toFormat('yyyy-MM-dd HH:mm:ss')
     const data = await request.validate({
       schema: schema.create({

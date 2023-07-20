@@ -61,6 +61,7 @@
     "@adonisjs/lucid": "^18.3.0",
     "@adonisjs/lucid-slugify": "^2.2.1",
     "@adonisjs/repl": "^3.1.0",
+    "dotenv": "^16.3.1",
     "luxon": "^3.3.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.3.1",
