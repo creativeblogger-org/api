@@ -64,7 +64,7 @@ export default class PostsController {
 
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
-      image: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(100)]),
+      image: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(100)]),
     })
 
     // Validate the provided data.
@@ -103,6 +103,7 @@ export default class PostsController {
     post.description = data.description
     post.tags = data.tags
     post.content = data.content
+    post.image = data.image
     await post.related('author').associate(auth.user!)
     await post.save()
 
