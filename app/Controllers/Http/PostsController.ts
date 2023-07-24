@@ -92,6 +92,7 @@ export default class PostsController {
         'slug.minLength': 'Le slug doit faire au moins 3 caractères.',
         'slug.maxLength': 'Le slug doit faire au maximum 30 caractères.',
 
+        'image.required': 'Le lien vers votre image est requis !',
         'image.minLength': 'Le lien doit faire au moins 3 caractères.',
         'image.maxLength': 'Le lien doit faire maximum 100 caractères.',
       },
