@@ -2,24 +2,33 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Application from '@ioc:Adonis/Core/Application'
 import fs from 'fs/promises'
 import APIException from 'App/Exceptions/APIException'
+import User from 'App/Models/User' // Importez le modèle User
 
 export default class ImageController {
-  public async upload({ request, response }: HttpContextContract) {
+  public async upload({ request, response, auth }: HttpContextContract) {
     const image = request.file('image')
-    const name = request.param('id')
 
     if (!image) {
       throw new APIException("Il n'y a aucun fichier à télécharger", 404)
     }
 
-    const fileName = `${name}.${image.extname}`
-    const path = `uploads/${fileName}`
+    const user = await User.find(auth.user?.id)
+
+    if (!user) {
+      return response.unauthorized('User not authenticated')
+    }
+
+    const fileName = `${auth.user!.id}.${image.extname}`
+    const path = `${fileName}`
 
     try {
       await image.move(Application.publicPath(), {
         name: fileName,
         overwrite: true, // Cette option permettra de remplacer le fichier s'il existe déjà
       })
+
+      user.pp = 'https://api.creativeblogger.org/public/' + path
+      await user.save()
 
       return response.ok({ path })
     } catch (error) {
