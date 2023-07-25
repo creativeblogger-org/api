@@ -3,14 +3,15 @@ import Application from '@ioc:Adonis/Core/Application'
 import fs from 'fs/promises'
 
 export default class ImageController {
-  public async upload({ request, response, auth }: HttpContextContract) {
+  public async upload({ request, response }: HttpContextContract) {
     const image = request.file('image')
+    const name = request.param('id')
 
     if (!image) {
       return response.badRequest('No image file uploaded')
     }
 
-    const fileName = `${auth.user?.id}.${image.extname}`
+    const fileName = `${name}.${image.extname}`
     const path = `uploads/${fileName}`
 
     try {
