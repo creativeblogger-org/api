@@ -53,6 +53,9 @@ export default class Post extends BaseModel {
   @column()
   public content: string
 
+  @column()
+  public is_last: boolean
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

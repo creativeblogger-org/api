@@ -104,6 +104,7 @@ export default class PostsController {
     post.tags = data.tags
     post.content = data.content
     post.image = data.image
+    post.is_last = false
     await post.related('author').associate(auth.user!)
     await post.save()
 
