@@ -28,6 +28,7 @@ Route.group(() => {
     Route.get('/', 'MeController.me')
     Route.put('/', 'MeController.update')
     Route.delete('/', 'MeController.delete')
+    Route.delete('/delete', 'MeController.deleteImage')
 
     Route.get('logs', 'MeController.logs')
   }).middleware('auth')

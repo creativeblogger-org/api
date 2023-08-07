@@ -119,4 +119,26 @@ export default class UsersController {
       throw new APIException("L'image n'a pas été trouvée...", 404)
     }
   }
+
+  public async deleteImage({ response, auth }: HttpContextContract) {
+    const user = auth.user
+
+    if (!user) {
+      throw new APIException("Vous n'êtes pas identifiés !", 501)
+    }
+
+    try {
+      // Supprimer le fichier image associé à l'utilisateur
+      const imagePath = `${user.id}.png` // Remplacez "ext" par l'extension du fichier (par exemple, jpg, png, etc.)
+      await fs.unlink(Application.publicPath(imagePath))
+
+      // Mettre à jour le champ 'pp' du modèle User pour indiquer qu'il n'y a plus d'image
+      user.pp = null
+      await user.save()
+
+      return response.ok('Image deleted successfully')
+    } catch (error) {
+      throw new APIException('Erreur dans le serveur', 500)
+    }
+  }
 }
