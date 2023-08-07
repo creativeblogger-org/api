@@ -15,6 +15,7 @@ export default class AuthController {
         }),
         rules.minLength(4),
         rules.maxLength(12),
+        rules.regex(/^[a-zA-Z][\w]{2,}$/),
       ]),
 
       email: schema.string({ trim: true }, [
@@ -24,6 +25,9 @@ export default class AuthController {
           column: 'email',
           caseInsensitive: true,
         }),
+        rules.regex(
+          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$/
+        ),
       ]),
 
       password: schema.string({}, [rules.minLength(5)]),
@@ -33,17 +37,22 @@ export default class AuthController {
     const data = await request.validate({
       schema: userSchema,
       messages: {
-        'username.required': 'Un nom d\'utilisateur est requis pour créer un compte.',
-        'username.unique': 'Le nom d\'utilisateur est déjà utilisé.',
-        'username.minLength': 'Le nom d\'utilisateur doit au moins faire {{ options.minLength }} caractères.',
-        'username.maxLength': 'Le nom d\'utilisateur doit au plus faire {{ options.maxLength }} caractères.',
+        'username.required': "Un nom d'utilisateur est requis pour créer un compte.",
+        'username.unique': "Le nom d'utilisateur est déjà utilisé.",
+        'username.minLength':
+          "Le nom d'utilisateur doit au moins faire {{ options.minLength }} caractères.",
+        'username.maxLength':
+          "Le nom d'utilisateur doit au plus faire {{ options.maxLength }} caractères.",
+        'username.regex': "Le nom d'utilisateur comporte des caractères interdits !",
 
         'email.required': 'Une adresse e-mail est requise pour créer un compte.',
-        'email.email': 'L\'adresse e-mail est invalide.',
-        'email.unique': 'L\'adresse e-mail est déjà utilisée.',
+        'email.email': "L'adresse e-mail est invalide.",
+        'email.unique': "L'adresse e-mail est déjà utilisée.",
+        'email.regex': "L'adresse e-mail comporte des caractères interdits",
 
         'password.required': 'Un mot de passe est requis pour créer un compte.',
-        'password.minLength': 'Le mot de passe doit au moins faire {{ options.minLength }} caractères.',
+        'password.minLength':
+          'Le mot de passe doit au moins faire {{ options.minLength }} caractères.',
       },
     })
 
@@ -54,10 +63,7 @@ export default class AuthController {
 
   public async login({ request, auth }: HttpContextContract) {
     // Retrieves the essential elements to connect.
-    const { username, password } = request.only([
-      'username',
-      'password',
-    ])
+    const { username, password } = request.only(['username', 'password'])
 
     // Login the user.
     try {

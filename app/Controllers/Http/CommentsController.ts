@@ -5,6 +5,16 @@ import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
 
 export default class CommentsController {
+  public async list({ request }: HttpContextContract) {
+    const comment = await Comment.query()
+      .preload('author')
+      .where('post', '=', request.param('id'))
+      .first()
+    if (!comment) throw new APIException('Le post ne contient pas de commentaires')
+
+    return comment
+  }
+
   public async new({ request, response, auth }: HttpContextContract) {
     // Check if the post exists.
     const post = await Post.findBy('slug', request.param('slug'))
@@ -24,10 +34,6 @@ export default class CommentsController {
         'content.maxLength': 'Le contenu doit faire au maximum 200 caractères.',
       },
     })
-
-    if (auth.user?.permission == 0) {
-      throw new APIException("Vous n'avez pas la permission de créer des posts", 403)
-    }
 
     // Save the comment in the database.
     const comment = new Comment()
