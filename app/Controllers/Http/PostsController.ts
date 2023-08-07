@@ -46,7 +46,7 @@ export default class PostsController {
       throw new APIException('Le post demandé est introuvable.', 404)
     }
 
-    return { post }
+    return post
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
