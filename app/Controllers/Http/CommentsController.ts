@@ -6,7 +6,7 @@ import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
 
 export default class CommentsController {
-  public async list({ request }: HttpContextContract) {
+  public async list({ request, response }: HttpContextContract) {
     const postId = request.param('id')
     const page = request.input('page', 0)
     const perPage = 20
@@ -17,8 +17,10 @@ export default class CommentsController {
     }
 
     // Compter les commentaires associés au post
-    const totalComments = await Database.from('comments').where('post', postId).count('* as total')
+    const totalComments = await Database.from('comments').where('post', post.id).count('* as total')
     const commentCount = totalComments[0]?.total || 0
+
+    response.header('nbComments', commentCount.toString())
 
     // Paginer les commentaires
     const comments = await Comment.query()
@@ -26,10 +28,7 @@ export default class CommentsController {
       .where('post', '=', postId)
       .paginate(page, perPage)
 
-    return {
-      comments,
-      commentCount,
-    }
+    return comments
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
