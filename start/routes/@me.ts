@@ -21,11 +21,14 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
-  Route.get('/', 'MeController.me')
-  Route.put('/', 'MeController.update')
-  Route.delete('/', 'MeController.delete')
+  Route.get('/image/:imageName', 'MeController.show')
 
-  Route.get('logs', 'MeController.logs')
-})
-  .middleware('auth')
-  .prefix('/@me')
+  Route.group(() => {
+    Route.post('/upload', 'MeController.upload')
+    Route.get('/', 'MeController.me')
+    Route.put('/', 'MeController.update')
+    Route.delete('/', 'MeController.delete')
+
+    Route.get('logs', 'MeController.logs')
+  }).middleware('auth')
+}).prefix('/@me')

@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import Database from '@ioc:Adonis/Lucid/Database'
 import APIException from 'App/Exceptions/APIException'
 import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
@@ -35,7 +36,7 @@ export default class PostsController {
   }
 
   // Returns the post with the given slug.
-  public async get({ request }: HttpContextContract) {
+  public async get({ request, response }: HttpContextContract) {
     const post = await Post.query()
       .preload('author')
       .preload('comments', (query) => query.limit(20)) // Limiter à 20 commentaires
@@ -45,6 +46,11 @@ export default class PostsController {
     if (!post) {
       throw new APIException('Le post demandé est introuvable.', 404)
     }
+
+    const totalComments = await Database.from('comments').where('post', post.id).count('* as total')
+    const commentCount = totalComments[0]?.total || 0
+
+    response.header('nbComments', commentCount.toString())
 
     return post
   }
