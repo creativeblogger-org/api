@@ -8,10 +8,9 @@ import Post from 'App/Models/Post'
 export default class CommentsController {
   public async list({ request }: HttpContextContract) {
     const postId = request.param('id')
-    const page = request.input('page', 1)
+    const page = request.input('page', 0)
     const perPage = 20
 
-    // Vérifier si le post existe
     const post = await Post.find(postId)
     if (!post) {
       throw new APIException('Le post demandé est introuvable.', 404)

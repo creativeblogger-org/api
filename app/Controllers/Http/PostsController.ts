@@ -51,7 +51,9 @@ export default class PostsController {
     const commentCount = await Database.from('comments').where('post', post.id).count('* as total')
     const totalComments = commentCount[0]?.total || 0
 
-    return { post, commentCount: totalComments }
+    post.commentCount = totalComments
+
+    return { post }
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
