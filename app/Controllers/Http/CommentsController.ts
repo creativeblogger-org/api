@@ -1,18 +1,36 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import Database from '@ioc:Adonis/Lucid/Database'
 import APIException from 'App/Exceptions/APIException'
 import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
 
 export default class CommentsController {
   public async list({ request }: HttpContextContract) {
-    const comment = await Comment.query()
-      .preload('author')
-      .where('post', '=', request.param('id'))
-      .first()
-    if (!comment) throw new APIException('Le post ne contient pas de commentaires')
+    const postId = request.param('id')
+    const page = request.input('page', 1)
+    const perPage = 20
 
-    return comment
+    // Vérifier si le post existe
+    const post = await Post.find(postId)
+    if (!post) {
+      throw new APIException('Le post demandé est introuvable.', 404)
+    }
+
+    // Compter les commentaires associés au post
+    const totalComments = await Database.from('comments').where('post', postId).count('* as total')
+    const commentCount = totalComments[0]?.total || 0
+
+    // Paginer les commentaires
+    const comments = await Comment.query()
+      .preload('author')
+      .where('post', '=', postId)
+      .paginate(page, perPage)
+
+    return {
+      comments: comments,
+      commentCount,
+    }
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
