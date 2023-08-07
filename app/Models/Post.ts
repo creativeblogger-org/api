@@ -57,7 +57,7 @@ export default class Post extends BaseModel {
   public is_last: boolean
 
   @column()
-  public commentCount: Int32Array
+  public comment_count: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

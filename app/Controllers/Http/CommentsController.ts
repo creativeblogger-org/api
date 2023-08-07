@@ -27,7 +27,7 @@ export default class CommentsController {
       .paginate(page, perPage)
 
     return {
-      comments: comments,
+      comments,
       commentCount,
     }
   }
