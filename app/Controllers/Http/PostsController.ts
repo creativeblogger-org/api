@@ -6,7 +6,7 @@ import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
 
 export default class PostsController {
-  public async list({ request }: HttpContextContract) {
+  public async list({ request, response }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({
         limit: schema.number.optional([rules.above(0)]),
@@ -28,43 +28,107 @@ export default class PostsController {
 
     if (data.limit && !data.page) {
       await query.limit(data.limit)
+      const postsCount = data.limit
+
+      response.header('nbposts', postsCount.toString())
     }
 
     if (data.limit && data.page) {
       await query.offset(data.limit * data.page).limit(data.limit)
+      const postsCount = data.limit
+
+      response.header('nbposts', postsCount.toString())
     }
 
     if (data.q) {
       let searchText = data.q
       searchText = decodeURIComponent(searchText)
-      const keywords = searchText.split(' ') // Séparer les mots-clés par les espaces
+      const keywords = searchText.split(' ')
       await query.where((query) => {
         for (const keyword of keywords) {
           query.where('title', 'like', `%${keyword}%`)
         }
       })
+      const totalPosts = await Database.from('posts')
+        .where('title', 'like', `%${keywords}%`)
+        .count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
+
+      response.header('nbposts', postsCount.toString())
     }
 
     if (data.tag) {
       await query.where('tags', '=', data.tag)
+      let totalPosts = await Database.from('posts').where('tags', '=', data.tag).count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
+
+      response.header('nbposts', postsCount.toString())
     }
 
     if (data.user) {
       await query.where('author', '=', data.user)
+      const totalPosts = await Database.from('posts').where('author', data.user).count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
+
+      response.header('nbposts', postsCount.toString())
     }
 
-    const posts = await query
+    if (data.user && data.tag) {
+      const totalPosts = await Database.from('posts')
+        .where('author', data.user)
+        .andWhere('tags', data.tag)
+        .count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
 
-    // Ajoutez le champ "is_last" à chaque article
-    const serializedPosts = posts.map((post, index) => ({
-      ...post.serializeAttributes({ omit: ['comments'] }),
-      is_last: index === posts.length - 1 ? 1 : 0, // Utilise 1 pour true et 0 pour false
-    }))
+      response.header('nbposts', postsCount.toString())
+    }
 
-    return serializedPosts
+    if (data.user && data.q) {
+      let searchText = data.q
+      searchText = decodeURIComponent(searchText)
+      const keywords = searchText.split(' ')
+      await query.where((query) => {
+        for (const keyword of keywords) {
+          query.where('title', 'like', `%${keyword}%`)
+        }
+      })
+      const totalPosts = await Database.from('posts')
+        .where('author', data.user)
+        .andWhere('title', 'like', `%${keywords}%`)
+        .count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
+
+      response.header('nbposts', postsCount.toString())
+    }
+
+    if (data.tag && data.q) {
+      let searchText = data.q
+      searchText = decodeURIComponent(searchText)
+      const keywords = searchText.split(' ')
+      await query.where((query) => {
+        for (const keyword of keywords) {
+          query.where('title', 'like', `%${keyword}%`)
+        }
+      })
+      const totalPosts = await Database.from('posts')
+        .where('title', 'like', `%${keywords}%`)
+        .andWhere('tags', data.tag)
+        .count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
+
+      response.header('nbposts', postsCount.toString())
+    }
+
+    if (!data.user && !data.tag && !data.q && !data.limit && !data.page) {
+      const totalPosts = await Database.from('posts').count('* as total')
+      const postsCount = totalPosts[0]?.total || 0
+
+      response.header('nbposts', postsCount.toString())
+    }
+
+    return query
   }
 
-  // Returns the post with the given slug.
   public async get({ request, response }: HttpContextContract) {
     const post = await Post.query()
       .preload('author')
@@ -157,9 +221,14 @@ export default class PostsController {
       throw new APIException("Vous n'avez pas la permission de modifier cet article.", 403)
 
     // Update the post.
-    const { title, content } = request.only(['title', 'content'])
+    const { title, content, description, image } = request.only([
+      'title',
+      'content',
+      'description',
+      'image',
+    ])
 
-    await post.merge({ title, content }).save()
+    await post.merge({ title, content, description, image }).save()
 
     return response.noContent()
   }

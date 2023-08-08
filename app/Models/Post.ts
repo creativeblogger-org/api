@@ -46,7 +46,7 @@ export default class Post extends BaseModel {
   @column()
   @hasMany(() => Comment, {
     foreignKey: 'post',
-    onQuery: (query) => query.preload('author'),
+    onQuery: (query) => query.preload('author').orderBy('created_at', 'desc'),
   })
   public comments: HasMany<typeof Comment>
 
@@ -82,9 +82,7 @@ export default class Post extends BaseModel {
       ...this.serializeRelations(
         {
           author: {
-            fields: {
-              omit: ['email', 'created_at', 'updated_at'],
-            },
+            fields: {},
           },
           comments: { fields: { omit: ['post'] } },
         },

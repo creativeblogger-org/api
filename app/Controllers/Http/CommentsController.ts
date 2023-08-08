@@ -25,6 +25,7 @@ export default class CommentsController {
     // Paginer les commentaires
     const comments = await Comment.query()
       .preload('author')
+      .orderBy('created_at', 'desc')
       .where('post', '=', postId)
       .paginate(page, perPage)
 
