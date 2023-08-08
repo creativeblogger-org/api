@@ -24,37 +24,44 @@ export default class PostsController {
       },
     })
 
-    let posts = Post.query().orderBy('created_at', 'desc').preload('author')
+    let query = Post.query().orderBy('created_at', 'desc').preload('author')
 
     if (data.limit && !data.page) {
-      await posts.limit(data.limit)
+      await query.limit(data.limit)
     }
 
     if (data.limit && data.page) {
-      await posts.offset(data.limit * data.page).limit(data.limit)
+      await query.offset(data.limit * data.page).limit(data.limit)
     }
 
     if (data.q) {
       let searchText = data.q
       searchText = decodeURIComponent(searchText)
       const keywords = searchText.split(' ') // Séparer les mots-clés par les espaces
-      await posts.where((query) => {
+      await query.where((query) => {
         for (const keyword of keywords) {
-          query.orWhere('title', 'like', `%${keyword}%`)
+          query.where('title', 'like', `%${keyword}%`)
         }
       })
     }
 
     if (data.tag) {
-      await posts.where('tags', '=', data.tag)
+      await query.where('tags', '=', data.tag)
     }
 
     if (data.user) {
-      await posts.where('author', '=', data.user)
+      await query.where('author', '=', data.user)
     }
 
-    ;(await posts).map((post) => post.serializeAttributes({ omit: ['comments'] }))
-    return await posts
+    const posts = await query
+
+    // Ajoutez le champ "is_last" à chaque article
+    const serializedPosts = posts.map((post, index) => ({
+      ...post.serializeAttributes({ omit: ['comments'] }),
+      is_last: index === posts.length - 1 ? 1 : 0, // Utilise 1 pour true et 0 pour false
+    }))
+
+    return serializedPosts
   }
 
   // Returns the post with the given slug.
