@@ -25,108 +25,47 @@ export default class PostsController {
     })
 
     let query = Post.query().orderBy('created_at', 'desc').preload('author')
+    let totalPosts = Database.from('posts');
 
     if (data.limit && !data.page) {
-      await query.limit(data.limit)
-      const postsCount = data.limit
-
-      response.header('nbposts', postsCount.toString())
+      query = query.limit(data.limit)
+      totalPosts = totalPosts.limit(data.limit)
     }
 
     if (data.limit && data.page) {
-      await query.offset(data.limit * data.page).limit(data.limit)
-      const postsCount = data.limit
-
-      response.header('nbposts', postsCount.toString())
+      query = query.offset(data.limit * data.page).limit(data.limit)
+      totalPosts = totalPosts.offset(data.limit * data.page).limit(data.limit)
     }
 
     if (data.q) {
       let searchText = data.q
       searchText = decodeURIComponent(searchText)
       const keywords = searchText.split(' ')
-      await query.where((query) => {
+      query = query.where((query) => {
         for (const keyword of keywords) {
           query.where('title', 'like', `%${keyword}%`)
         }
       })
-      const totalPosts = await Database.from('posts')
-        .where('title', 'like', `%${keywords}%`)
-        .count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
-
-      response.header('nbposts', postsCount.toString())
+      totalPosts = totalPosts.where('title', 'like', `%${keywords}%`)
     }
 
     if (data.tag) {
-      await query.where('tags', '=', data.tag)
-      let totalPosts = await Database.from('posts').where('tags', '=', data.tag).count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
-
-      response.header('nbposts', postsCount.toString())
+      query = query.where('tags', '=', data.tag)
+      totalPosts.where('tags', '=', data.tag)
     }
 
     if (data.user) {
-      await query.where('author', '=', data.user)
-      const totalPosts = await Database.from('posts').where('author', data.user).count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
-
-      response.header('nbposts', postsCount.toString())
+      query = query.where('author', '=', data.user)
+      totalPosts = totalPosts.where('author', data.user)
     }
 
-    if (data.user && data.tag) {
-      const totalPosts = await Database.from('posts')
-        .where('author', data.user)
-        .andWhere('tags', data.tag)
-        .count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
+    var slt = await query;
 
-      response.header('nbposts', postsCount.toString())
-    }
+    var slt2 = await totalPosts.count('* as total');
 
-    if (data.user && data.q) {
-      let searchText = data.q
-      searchText = decodeURIComponent(searchText)
-      const keywords = searchText.split(' ')
-      await query.where((query) => {
-        for (const keyword of keywords) {
-          query.where('title', 'like', `%${keyword}%`)
-        }
-      })
-      const totalPosts = await Database.from('posts')
-        .where('author', data.user)
-        .andWhere('title', 'like', `%${keywords}%`)
-        .count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
+    response.header('nbposts', slt2[0]?.total || 0)
 
-      response.header('nbposts', postsCount.toString())
-    }
-
-    if (data.tag && data.q) {
-      let searchText = data.q
-      searchText = decodeURIComponent(searchText)
-      const keywords = searchText.split(' ')
-      await query.where((query) => {
-        for (const keyword of keywords) {
-          query.where('title', 'like', `%${keyword}%`)
-        }
-      })
-      const totalPosts = await Database.from('posts')
-        .where('title', 'like', `%${keywords}%`)
-        .andWhere('tags', data.tag)
-        .count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
-
-      response.header('nbposts', postsCount.toString())
-    }
-
-    if (!data.user && !data.tag && !data.q && !data.limit && !data.page) {
-      const totalPosts = await Database.from('posts').count('* as total')
-      const postsCount = totalPosts[0]?.total || 0
-
-      response.header('nbposts', postsCount.toString())
-    }
-
-    return query
+    return slt
   }
 
   public async get({ request, response }: HttpContextContract) {
