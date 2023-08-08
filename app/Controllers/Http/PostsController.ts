@@ -11,6 +11,9 @@ export default class PostsController {
       schema: schema.create({
         limit: schema.number.optional([rules.above(0)]),
         page: schema.number.optional([rules.above(0)]),
+        q: schema.string.optional([rules.above(0)]),
+        tag: schema.string.optional([rules.above(0)]),
+        user: schema.string.optional([rules.above(0)]),
       }),
       messages: {
         'limit.number': "La limite d'articles doit être un nombre.",
@@ -29,6 +32,25 @@ export default class PostsController {
 
     if (data.limit && data.page) {
       await posts.offset(data.limit * data.page).limit(data.limit)
+    }
+
+    if (data.q) {
+      let searchText = data.q
+      searchText = decodeURIComponent(searchText)
+      const keywords = searchText.split(' ') // Séparer les mots-clés par les espaces
+      await posts.where((query) => {
+        for (const keyword of keywords) {
+          query.orWhere('title', 'like', `%${keyword}%`)
+        }
+      })
+    }
+
+    if (data.tag) {
+      await posts.where('tags', '=', data.tag)
+    }
+
+    if (data.user) {
+      await posts.where('author', '=', data.user)
     }
 
     ;(await posts).map((post) => post.serializeAttributes({ omit: ['comments'] }))
@@ -145,39 +167,5 @@ export default class PostsController {
     // Delete the post.
     await post.delete()
     return response.noContent()
-  }
-
-  public async getByTag({ request }) {
-    const post = await Post.query()
-      .orderBy('created_at', 'desc')
-      .preload('author')
-      .where('tags', '=', request.param('tags'))
-
-    if (!post) throw new APIException('Le tag ne contient aucun post', 404)
-
-    return post
-  }
-
-  public async getByUsername({ request }) {
-    const post = await Post.query()
-      .orderBy('created_at', 'desc')
-      .preload('author')
-      .where('author', '=', request.param('username'))
-
-    if (!post) throw new APIException("L'utilisateur n'a pas écrit d'articles", 404)
-
-    return post
-  }
-
-  public async getByContent({ request }) {
-    const searchText = request.param('content')
-    const posts = await Post.query()
-      .orderBy('created_at', 'desc')
-      .preload('author')
-      .where('title', 'like', `%${searchText}%`)
-
-    if (!posts) throw new APIException("L'utilisateur n'a pas écrit d'articles", 404)
-
-    return posts
   }
 }
