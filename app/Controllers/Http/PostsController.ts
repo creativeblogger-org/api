@@ -25,7 +25,7 @@ export default class PostsController {
     })
 
     let query = Post.query().orderBy('created_at', 'desc').preload('author')
-    let totalPosts = Database.from('posts');
+    let totalPosts = Database.from('posts')
 
     if (data.limit && !data.page) {
       query = query.limit(data.limit)
@@ -59,9 +59,9 @@ export default class PostsController {
       totalPosts = totalPosts.where('author', data.user)
     }
 
-    var slt = await query;
+    var slt = await query
 
-    var slt2 = await totalPosts.count('* as total');
+    var slt2 = await totalPosts.count('* as total')
 
     response.header('nbposts', slt2[0]?.total || 0)
 
@@ -160,14 +160,15 @@ export default class PostsController {
       throw new APIException("Vous n'avez pas la permission de modifier cet article.", 403)
 
     // Update the post.
-    const { title, content, description, image } = request.only([
+    const { title, content, description, image, tags } = request.only([
       'title',
       'content',
       'description',
       'image',
+      'tags',
     ])
 
-    await post.merge({ title, content, description, image }).save()
+    await post.merge({ title, content, description, image, tags }).save()
 
     return response.noContent()
   }
