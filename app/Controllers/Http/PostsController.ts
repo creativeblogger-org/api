@@ -4,6 +4,16 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import APIException from 'App/Exceptions/APIException'
 import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
+import Mastodon from 'mastodon-api'
+import Env from '@ioc:Adonis/Core/Env'
+
+const M = new Mastodon({
+  client_key: Env.get('MASTODON_CLIENT_KEY'),
+  client_secret: Env.get('MASTODON_CLIENT_SECRET'),
+  access_token: Env.get('MASTODON_ACCESS_TOKEN'),
+  timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
+  api_url: 'https://mastodon.social/api/v1/', // optional, defaults to https://mastodon.social/api/v1/
+})
 
 export default class PostsController {
   public async list({ request, response }: HttpContextContract) {
@@ -147,6 +157,20 @@ export default class PostsController {
     post.is_last = false
     await post.related('author').associate(auth.user!)
     await post.save()
+
+    const status = `
+    😍  Nouvel article sur Creative Blogger ! 😍 
+     - ${data.title}
+     ${data.description}
+    Lien : https://creativeblogger.org/posts/${data.slug}
+  `
+
+    try {
+      await M.post('statuses', { status })
+      console.log('Article posté sur Mastodon !')
+    } catch (error) {
+      console.error('Erreur lors de la publication sur Mastodon :', error)
+    }
 
     return response.noContent()
   }
