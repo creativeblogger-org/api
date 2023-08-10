@@ -6,6 +6,8 @@ import Post from 'App/Models/Post'
 import Permissions from 'Contracts/Enums/Permissions'
 import Mastodon from 'mastodon-api'
 import Env from '@ioc:Adonis/Core/Env'
+import Application from '@ioc:Adonis/Core/Application'
+import Log from 'App/Models/Log'
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
@@ -114,6 +116,8 @@ export default class PostsController {
       slug: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
       image: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(100)]),
+
+      age_restricted: schema.number(),
     })
 
     // Validate the provided data.
@@ -144,6 +148,8 @@ export default class PostsController {
         'image.required': 'Le lien vers votre image est requis !',
         'image.minLength': 'Le lien doit faire au moins 3 caractères.',
         'image.maxLength': 'Le lien doit faire maximum 100 caractères.',
+
+        'age_restricted': "La restriction d'âge est obligatoire !",
       },
     })
 
@@ -155,6 +161,7 @@ export default class PostsController {
     post.content = data.content
     post.image = data.image
     post.is_last = false
+    post.age_restricted = data.age_restricted
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -194,6 +201,11 @@ export default class PostsController {
 
     await post.merge({ title, content, description, image, tags }).save()
 
+    const log = new Log()
+    log.ip = request.ip()
+    log.action = `update-post:${post.slug}`
+    await log.save()
+
     return response.noContent()
   }
 
@@ -204,8 +216,40 @@ export default class PostsController {
 
     if (!post.hasPermission) throw new APIException("Vous n'êtes pas l'auteur de cet article.", 403)
 
+    const log = new Log()
+    log.ip = request.ip()
+    log.action = `delete-post:${post.slug}`
+    await log.save()
+
     // Delete the post.
     await post.delete()
     return response.noContent()
+  }
+
+  public async upload({ request, response, auth }: HttpContextContract) {
+    const image = request.file('image')
+
+    if (!image) {
+      throw new APIException("Il n'y a aucun fichier à télécharger", 404)
+    }
+
+    const fileName = `${auth.user!.id}.${image.extname}`
+    const path = `${fileName}`
+
+    try {
+      await image.move(Application.publicPath() + '/posts/', {
+        name: fileName,
+        overwrite: true, // Cette option permettra de remplacer le fichier s'il existe déjà
+      })
+
+      const log = new Log()
+      log.ip = request.ip()
+      log.action = `upload-img-post:${fileName}`
+      await log.save()
+
+      return response.ok({ path })
+    } catch (error) {
+      throw new APIException("Erreur durant l'upload", 500)
+    }
   }
 }
