@@ -116,7 +116,7 @@ export default class PostsController {
 
       image: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(100)]),
 
-      for_kids: schema.boolean(),
+      required_age: schema.number(),
     })
 
     // Validate the provided data.
@@ -148,7 +148,7 @@ export default class PostsController {
         'image.minLength': 'Le lien doit faire au moins 3 caractères.',
         'image.maxLength': 'Le lien doit faire maximum 100 caractères.',
 
-        'for_kids': 'La restriction infantile est obligatoire !',
+        'required_age': 'La restriction infantile est obligatoire !',
       },
     })
 
@@ -159,7 +159,7 @@ export default class PostsController {
     post.content = data.content
     post.image = data.image
     post.is_last = false
-    post.for_kids = data.for_kids
+    post.required_age = data.required_age
     await post.related('author').associate(auth.user!)
     await post.save()
 
