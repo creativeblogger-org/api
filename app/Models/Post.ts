@@ -37,7 +37,7 @@ export default class Post extends BaseModel {
   public tags: string
 
   @column()
-  public age_restricted: number
+  public for_kids: boolean
 
   @column()
   @slugify({

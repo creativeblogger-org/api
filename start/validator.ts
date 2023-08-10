@@ -19,7 +19,7 @@ validator.rule('above', (value, [number], options) => {
       options.pointer,
       'above',
       'above validation failed',
-      options.arrayExpressionPointer,
+      options.arrayExpressionPointer
     )
   }
 })

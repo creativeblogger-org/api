@@ -7,14 +7,13 @@ import Permissions from 'Contracts/Enums/Permissions'
 import Mastodon from 'mastodon-api'
 import Env from '@ioc:Adonis/Core/Env'
 import Application from '@ioc:Adonis/Core/Application'
-import Log from 'App/Models/Log'
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
   client_secret: Env.get('MASTODON_CLIENT_SECRET'),
   access_token: Env.get('MASTODON_ACCESS_TOKEN'),
-  timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
-  api_url: 'https://mastodon.social/api/v1/', // optional, defaults to https://mastodon.social/api/v1/
+  timeout_ms: 60 * 1000,
+  api_url: 'https://mastodon.social/api/v1/',
 })
 
 export default class PostsController {
@@ -117,7 +116,7 @@ export default class PostsController {
 
       image: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(100)]),
 
-      age_restricted: schema.number(),
+      for_kids: schema.boolean(),
     })
 
     // Validate the provided data.
@@ -149,11 +148,10 @@ export default class PostsController {
         'image.minLength': 'Le lien doit faire au moins 3 caractères.',
         'image.maxLength': 'Le lien doit faire maximum 100 caractères.',
 
-        'age_restricted': "La restriction d'âge est obligatoire !",
+        'for_kids': 'La restriction infantile est obligatoire !',
       },
     })
 
-    // Save the post in the database.
     const post = new Post()
     post.title = data.title
     post.description = data.description
@@ -161,7 +159,7 @@ export default class PostsController {
     post.content = data.content
     post.image = data.image
     post.is_last = false
-    post.age_restricted = data.age_restricted
+    post.for_kids = data.for_kids
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -183,14 +181,12 @@ export default class PostsController {
   }
 
   public async update({ request, response }: HttpContextContract) {
-    // Check if the post exists.
     const post = await Post.findBy('slug', request.param('slug'))
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
     if (!post.hasPermission)
       throw new APIException("Vous n'avez pas la permission de modifier cet article.", 403)
 
-    // Update the post.
     const { title, content, description, image, tags } = request.only([
       'title',
       'content',
@@ -201,27 +197,15 @@ export default class PostsController {
 
     await post.merge({ title, content, description, image, tags }).save()
 
-    const log = new Log()
-    log.ip = request.ip()
-    log.action = `update-post:${post.slug}`
-    await log.save()
-
     return response.noContent()
   }
 
   public async delete({ request, response }: HttpContextContract) {
-    // Check if the post exists.
     const post = await Post.findBy('slug', request.param('slug'))
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
     if (!post.hasPermission) throw new APIException("Vous n'êtes pas l'auteur de cet article.", 403)
 
-    const log = new Log()
-    log.ip = request.ip()
-    log.action = `delete-post:${post.slug}`
-    await log.save()
-
-    // Delete the post.
     await post.delete()
     return response.noContent()
   }
@@ -239,13 +223,8 @@ export default class PostsController {
     try {
       await image.move(Application.publicPath() + '/posts/', {
         name: fileName,
-        overwrite: true, // Cette option permettra de remplacer le fichier s'il existe déjà
+        overwrite: true,
       })
-
-      const log = new Log()
-      log.ip = request.ip()
-      log.action = `upload-img-post:${fileName}`
-      await log.save()
 
       return response.ok({ path })
     } catch (error) {
