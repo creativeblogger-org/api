@@ -212,19 +212,19 @@ export default class PostsController {
     return response.noContent()
   }
 
-  public async upload({ request, response, auth }: HttpContextContract) {
+  public async upload({ request, response }: HttpContextContract) {
     const image = request.file('image')
 
     if (!image) {
       throw new APIException("Il n'y a aucun fichier à télécharger", 404)
     }
 
-    const fileName = `posts-${auth.user!.id}.${image.extname}`
-    const originalImagePath = Application.publicPath() + '/posts/' + fileName
-    const resizedImagePath = Application.publicPath() + '/posts/img-' + fileName
+    const fileName = image.clientName
+    const resizedFileName = fileName
+    const resizedImagePath = Application.publicPath() + '/posts/' + resizedFileName
 
     try {
-      // Déplacer l'image vers le répertoire public
+      // Déplacer l'image vers le répertoire public temporairement
       await image.move(Application.tmpPath(), {
         name: fileName,
         overwrite: true,
@@ -235,10 +235,10 @@ export default class PostsController {
         .resize(104)
         .toFile(resizedImagePath)
 
-      // Supprimer l'image d'origine téléchargée
-      await fs.unlink(originalImagePath)
+      // Supprimer l'image originale téléchargée temporairement
+      await fs.unlink(Application.tmpPath() + '/' + fileName)
 
-      return response.ok({ path: resizedImagePath })
+      return response.ok({ path: resizedFileName }) // Renvoyez le chemin du fichier redimensionné
     } catch (error) {
       throw new APIException("Erreur durant l'upload", 500)
     }
