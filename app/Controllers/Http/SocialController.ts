@@ -15,7 +15,7 @@ const M = new Mastodon({
 
 export default class SocialController {
   public async mastodon({ auth, request, response }: HttpContextContract) {
-    if (auth.user!.permission < Permissions.Redactor)
+    if (auth.user!.permission < Permissions.Administrator)
       throw new APIException("Vous n'avez pas la permission de créer un article.", 403)
 
     // Defines the post schema for the validation.
