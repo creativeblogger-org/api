@@ -28,7 +28,7 @@ Route.group(() => {
     Route.post('/', 'PostsController.new')
     Route.put(':slug', 'PostsController.update')
     Route.delete(':slug', 'PostsController.delete')
-    Route.post('/upload', 'PostController.upload')
+    Route.post('/upload', 'PostsController.upload')
 
     Route.post(':slug/comment', 'CommentsController.new')
   }).middleware('auth')

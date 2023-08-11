@@ -7,6 +7,8 @@ import Permissions from 'Contracts/Enums/Permissions'
 import Mastodon from 'mastodon-api'
 import Env from '@ioc:Adonis/Core/Env'
 import Application from '@ioc:Adonis/Core/Application'
+import sharp from 'sharp'
+import fs from 'fs'
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
@@ -217,16 +219,26 @@ export default class PostsController {
       throw new APIException("Il n'y a aucun fichier à télécharger", 404)
     }
 
-    const fileName = `${auth.user!.id}.${image.extname}`
-    const path = `${fileName}`
+    const fileName = `posts-${auth.user!.id}.${image.extname}`
+    const originalImagePath = Application.publicPath() + '/posts/' + fileName
+    const resizedImagePath = Application.publicPath() + '/posts/img-' + fileName
 
     try {
-      await image.move(Application.publicPath() + '/posts/', {
+      // Déplacer l'image vers le répertoire public
+      await image.move(Application.tmpPath(), {
         name: fileName,
         overwrite: true,
       })
 
-      return response.ok({ path })
+      // Redimensionner l'image avec sharp
+      await sharp(Application.tmpPath() + '/' + fileName)
+        .resize(104)
+        .toFile(resizedImagePath)
+
+      // Supprimer l'image d'origine téléchargée
+      await fs.unlink(originalImagePath)
+
+      return response.ok({ path: resizedImagePath })
     } catch (error) {
       throw new APIException("Erreur durant l'upload", 500)
     }
