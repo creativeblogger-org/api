@@ -8,7 +8,7 @@ import Mastodon from 'mastodon-api'
 import Env from '@ioc:Adonis/Core/Env'
 import Application from '@ioc:Adonis/Core/Application'
 import sharp from 'sharp'
-import fs from 'fs'
+import fs from 'fs/promises'
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
