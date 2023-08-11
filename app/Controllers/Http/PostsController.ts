@@ -167,9 +167,9 @@ export default class PostsController {
 
     const status = `
     😍  Nouvel article sur Creative Blogger ! 😍 
-     - ${data.title}
-     ${data.description}
-    Lien : https://creativeblogger.org/posts/${data.slug}
+     - ${post.title}
+     ${post.description}
+    Lien : https://creativeblogger.org/posts/${post.slug}
   `
 
     try {
