@@ -50,6 +50,14 @@ export default class UsersController {
   }
 
   public async upgrade({ request, response, auth }: HttpContextContract) {
+    const data = await request.validate({
+      schema: schema.create({
+        permission: schema.number(),
+      }),
+      messages: {
+        'permission.required': 'La permission est obligatoire',
+      },
+    })
     const user = await User.findBy('username', request.param('username'))
     if (!user) throw new APIException("L'utilisateur demandé est introuvable.", 404)
 
@@ -62,7 +70,7 @@ export default class UsersController {
       }
     }
 
-    user.permission = request.param('perms')
+    user.permission = data.permission
 
     await user.merge(user).save()
 
