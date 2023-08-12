@@ -25,5 +25,5 @@ Route.group(() => {
   Route.get(':username', 'UsersController.get')
   Route.get(':id/posts', 'UsersController.posts')
   Route.delete(':username', 'UsersController.delete')
-  Route.put(':username/:permission', 'UsersController.writer')
+  Route.put('/upgrade/:username/:perms', 'UsersController.upgrade')
 }).prefix('/users')

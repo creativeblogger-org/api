@@ -49,15 +49,22 @@ export default class UsersController {
     return response.noContent()
   }
 
-  public async writer({ request, response, auth }: HttpContextContract) {
-    const { username } = request.param('username')
-    const { permission } = request.param('permission')
+  public async upgrade({ request, response, auth }: HttpContextContract) {
+    const user = await User.findBy('username', request.param('username'))
+    if (!user) throw new APIException("L'utilisateur demandé est introuvable.", 404)
 
-    if (auth.user?.permission !== 3) {
-      throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
+    if (auth.user?.permission) {
+      if (auth.user?.permission < 2) {
+        throw new APIException('Seul un modérateur peut effectuer cette opération.', 403)
+      }
+      if (auth.user?.permission < 3 && request.param('perms') > 1) {
+        throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
+      }
     }
 
-    await username.merge({ permission }).save()
+    user.permission = request.param('perms')
+
+    await user.merge(user).save()
 
     return response.noContent()
   }
