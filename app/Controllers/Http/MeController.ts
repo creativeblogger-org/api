@@ -4,6 +4,7 @@ import Log from 'App/Models/Log'
 import Application from '@ioc:Adonis/Core/Application'
 import User from 'App/Models/User'
 import fs from 'fs/promises'
+import sharp from 'sharp'
 
 export default class UsersController {
   // Returns the user currently logged in.
@@ -86,19 +87,26 @@ export default class UsersController {
       throw new APIException("Vous n'êtes pas identifiés !", 501)
     }
 
-    const fileName = `${auth.user!.id}.${image.extname}`
-    const path = `${fileName}`
+    const fileName = `${auth.user!.id}.png`
+    const resizedImagePath = Application.publicPath() + '/users/' + fileName
 
     try {
-      await image.move(Application.publicPath(), {
+      await image.move(Application.tmpPath(), {
         name: fileName,
         overwrite: true, // Cette option permettra de remplacer le fichier s'il existe déjà
       })
 
-      user.pp = 'https://api.creativeblogger.org/public/' + path
+      await sharp(Application.tmpPath() + '/' + fileName)
+        .resize(500, 500)
+        .toFile(resizedImagePath)
+
+      // Supprimer l'image originale téléchargée temporairement
+      await fs.unlink(Application.tmpPath() + '/' + fileName)
+
+      user.pp = 'https://api.creativeblogger.org/public/users/' + resizedImagePath
       await user.save()
 
-      return response.ok({ path })
+      return response.ok({ resizedImagePath })
     } catch (error) {
       throw new APIException("Erreur durant l'upload", 500)
     }
