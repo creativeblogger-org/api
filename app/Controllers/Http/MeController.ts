@@ -103,7 +103,7 @@ export default class UsersController {
       // Supprimer l'image originale téléchargée temporairement
       await fs.unlink(Application.tmpPath() + '/' + fileName)
 
-      user.pp = 'https://api.creativeblogger.org/public/users/' + resizedImagePath
+      user.pp = 'https://api.creativeblogger.org/public/users/' + fileName
       await user.save()
 
       return response.ok({ resizedImagePath })
