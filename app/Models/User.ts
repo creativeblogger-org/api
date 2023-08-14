@@ -25,8 +25,8 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public rememberMeToken: string | null
 
-  @column.date()
-  public birthdate: DateTime
+  @column()
+  public birthdate: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

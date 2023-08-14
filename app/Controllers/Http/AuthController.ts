@@ -32,7 +32,7 @@ export default class AuthController {
 
       password: schema.string({}, [rules.minLength(5)]),
 
-      birthdate: schema.date(),
+      birthdate: schema.number(),
     })
 
     // Verification of the data provided by the user.
