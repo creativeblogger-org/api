@@ -25,14 +25,21 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public rememberMeToken: string | null
 
-  @column()
-  public birthdate: number
+  @column.dateTime()
+  public birthdate: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @beforeSave()
+  public static async convertDate(user: User) {
+    if (user.birthdate) {
+      user.birthdate = DateTime.fromISO(user.birthdate.toString())
+    }
+  }
 
   @beforeSave()
   public static async hashPassword(user: User) {
