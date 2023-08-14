@@ -31,6 +31,8 @@ export default class AuthController {
       ]),
 
       password: schema.string({}, [rules.minLength(5)]),
+
+      birthdate: schema.date(),
     })
 
     // Verification of the data provided by the user.
@@ -53,6 +55,8 @@ export default class AuthController {
         'password.required': 'Un mot de passe est requis pour créer un compte.',
         'password.minLength':
           'Le mot de passe doit au moins faire {{ options.minLength }} caractères.',
+
+        'birthdate': 'La date de naissance est obligatoire !',
       },
     })
 

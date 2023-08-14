@@ -37,6 +37,9 @@ export default class Post extends BaseModel {
   public tags: string
 
   @column()
+  public likes: number
+
+  @column()
   public required_age: number
 
   @column()

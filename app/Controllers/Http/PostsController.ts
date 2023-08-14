@@ -19,7 +19,7 @@ const M = new Mastodon({
 })
 
 export default class PostsController {
-  public async list({ request, response }: HttpContextContract) {
+  public async list({ request, response, auth }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({
         limit: schema.number.optional([rules.above(0)]),
@@ -40,6 +40,17 @@ export default class PostsController {
     let query = Post.query().orderBy('created_at', 'desc').preload('author')
     let totalPosts = Database.from('posts')
 
+    if (auth.user) {
+      const today = new Date()
+      const yearOfUser = today.getUTCFullYear() - auth.user.birthdate.year
+      query = query.where('required_age', '<=', yearOfUser)
+      if (auth.user.permission > 0) {
+        query = Post.query().orderBy('created_at', 'desc').preload('author')
+      }
+    } else {
+      query = query.where('required_age', '=', 0)
+    }
+
     if (data.limit && !data.page) {
       query = query.limit(data.limit)
       totalPosts = totalPosts.limit(data.limit)
@@ -58,8 +69,8 @@ export default class PostsController {
         for (const keyword of keywords) {
           query.where('title', 'like', `%${keyword}%`)
         }
+        totalPosts = totalPosts.where('title', 'like', `%${keywords}%`)
       })
-      totalPosts = totalPosts.where('title', 'like', `%${keywords}%`)
     }
 
     if (data.tag) {
@@ -162,6 +173,7 @@ export default class PostsController {
     post.image = data.image
     post.is_last = false
     post.required_age = data.required_age
+    post.likes = 0
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -241,6 +253,14 @@ export default class PostsController {
       return response.ok({ path: resizedFileName }) // Renvoyez le chemin du fichier redimensionné
     } catch (error) {
       throw new APIException("Erreur durant l'upload", 500)
+    }
+  }
+
+  public async like({ request }: HttpContextContract) {
+    const post = await Post.findBy('slug', request.param('slug'))
+    if (post) {
+      post.likes = post.likes + 1
+      post.save()
     }
   }
 }

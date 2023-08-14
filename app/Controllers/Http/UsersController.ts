@@ -29,7 +29,7 @@ export default class UsersController {
 
     return user.serialize({
       fields: {
-        omit: ['email', 'password'],
+        omit: ['email', 'password', 'birthdate'],
       },
     })
   }
