@@ -56,7 +56,7 @@ export default class AuthController {
         'password.minLength':
           'Le mot de passe doit au moins faire {{ options.minLength }} caractères.',
 
-        'birthdate': 'La date de naissance est obligatoire !',
+        'birthdate.required': 'La date de naissance est obligatoire !',
       },
     })
 

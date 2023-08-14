@@ -25,7 +25,7 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public rememberMeToken: string | null
 
-  @column.dateTime()
+  @column.date()
   public birthdate: DateTime
 
   @column.dateTime({ autoCreate: true })
@@ -37,7 +37,7 @@ export default class User extends BaseModel {
   // @beforeSave()
   // public static async convertDate(user: User) {
   //   if (user.birthdate) {
-  //     user.birthdate = DateTime.fromISO(user.birthdate.toString())
+  //     user.birthdate = DateTime.fromMillis(user.birthdate)
   //   }
   // }
 
