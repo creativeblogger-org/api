@@ -34,12 +34,12 @@ export default class User extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  @beforeSave()
-  public static async convertDate(user: User) {
-    if (user.birthdate) {
-      user.birthdate = DateTime.fromISO(user.birthdate.toString())
-    }
-  }
+  // @beforeSave()
+  // public static async convertDate(user: User) {
+  //   if (user.birthdate) {
+  //     user.birthdate = DateTime.fromISO(user.birthdate.toString())
+  //   }
+  // }
 
   @beforeSave()
   public static async hashPassword(user: User) {
