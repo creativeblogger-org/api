@@ -117,7 +117,7 @@ export default class UsersController {
 
     try {
       // Vérifiez si le fichier existe avant de renvoyer une réponse
-      const imagePath = Application.publicPath(`${imageName}` + '.png')
+      const imagePath = Application.publicPath(`/users/${imageName}` + '.png')
       await fs.access(imagePath)
 
       // Renvoyer le fichier image si tout est bon
@@ -137,7 +137,7 @@ export default class UsersController {
 
     try {
       // Supprimer le fichier image associé à l'utilisateur
-      const imagePath = `${user.id}.png` // Remplacez "ext" par l'extension du fichier (par exemple, jpg, png, etc.)
+      const imagePath = `users/${user.id}.png` // Remplacez "ext" par l'extension du fichier (par exemple, jpg, png, etc.)
       await fs.unlink(Application.publicPath(imagePath))
 
       // Mettre à jour le champ 'pp' du modèle User pour indiquer qu'il n'y a plus d'image
