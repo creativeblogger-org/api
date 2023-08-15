@@ -41,7 +41,9 @@ export default class PostsController {
     let totalPosts = Database.from('posts')
 
     if (auth.user) {
-      query = query.where(auth.user.birthdate.toString(), '-', 'required_age')
+      const today = new Date()
+      const yearOfUser = today.getUTCFullYear() - auth.user.birthdate.year
+      query = query.where('required_age', '<=', yearOfUser)
       if (auth.user.permission > 0) {
         query = Post.query().orderBy('created_at', 'desc').preload('author')
       }
