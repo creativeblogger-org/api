@@ -30,7 +30,7 @@ export default class AuthController {
         ),
       ]),
 
-      password: schema.string({}, [rules.minLength(5)]),
+      password: schema.string({}, [rules.minLength(8)]),
 
       birthdate: schema.date(),
     })
