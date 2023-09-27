@@ -5,7 +5,6 @@ import Post from 'App/Models/Post'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 
 export default class UsersController {
-  // Get all users registered.
   public async list({ auth }: HttpContextContract) {
     if (auth.user?.permission !== 3) {
       throw new APIException(
@@ -22,7 +21,6 @@ export default class UsersController {
     })
   }
 
-  // Get a user by its username.
   public async get({ request }: HttpContextContract) {
     const user = await User.findBy('username', request.param('username'))
     if (!user) throw new APIException("L'utilisateur demandé est introuvable.", 404)
@@ -35,12 +33,9 @@ export default class UsersController {
   }
 
   public async delete({ request, response, auth }: HttpContextContract) {
-    // Checks the user's permission.
-    // const { username } = request.param('username')
     if (auth.user?.permission !== 3)
       throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
 
-    // Deletes the user.
     const user: any = await User.findBy('username', request.param('username'))
     if (user.permission === 3 || 2) {
       throw new APIException('Vous ne pouvez pas supprimer un administrateur / modérateur !', 403)

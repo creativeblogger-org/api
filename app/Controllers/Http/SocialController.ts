@@ -18,7 +18,6 @@ export default class SocialController {
     if (auth.user!.permission < Permissions.Administrator)
       throw new APIException("Vous n'avez pas la permission de créer un article.", 403)
 
-    // Defines the post schema for the validation.
     const postSchema = schema.create({
       title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
@@ -27,7 +26,6 @@ export default class SocialController {
       tags: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(50)]),
     })
 
-    // Validate the provided data.
     const data = await request.validate({
       schema: postSchema,
       messages: {

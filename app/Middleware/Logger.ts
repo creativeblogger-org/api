@@ -4,19 +4,11 @@ import LogMessages from 'Contracts/Enums/LogMessages'
 
 export default class Logger {
   public async handle({ request, auth }: HttpContextContract, next: () => Promise<void>) {
-    // code for middleware goes here. ABOVE THE NEXT CALL
-    if (!auth.user)
-      return await next()
+    if (!auth.user) return await next()
 
-    const message = LogMessages[
-      request
-        .url()
-        .slice(1)
-        .replace(/\//g, '.')
-    ]
+    const message = LogMessages[request.url().slice(1).replace(/\//g, '.')]
 
-    if (!message)
-      return await next()
+    if (!message) return await next()
 
     const log = new Log()
     log.ip = request.ip()

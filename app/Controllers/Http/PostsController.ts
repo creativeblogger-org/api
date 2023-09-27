@@ -95,7 +95,7 @@ export default class PostsController {
   public async get({ request, response }: HttpContextContract) {
     const post = await Post.query()
       .preload('author')
-      .preload('comments', (query) => query.limit(20)) // Limiter à 20 commentaires
+      .preload('comments', (query) => query.limit(20))
       .where('slug', '=', request.param('slug'))
       .first()
 
@@ -115,7 +115,6 @@ export default class PostsController {
     if (auth.user!.permission < Permissions.Redactor)
       throw new APIException("Vous n'avez pas la permission de créer un article.", 403)
 
-    // Defines the post schema for the validation.
     const postSchema = schema.create({
       title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
@@ -132,7 +131,6 @@ export default class PostsController {
       required_age: schema.number(),
     })
 
-    // Validate the provided data.
     const data = await request.validate({
       schema: postSchema,
       messages: {
@@ -236,21 +234,18 @@ export default class PostsController {
     const resizedImagePath = Application.publicPath() + '/posts/' + resizedFileName
 
     try {
-      // Déplacer l'image vers le répertoire public temporairement
       await image.move(Application.tmpPath(), {
         name: fileName,
         overwrite: true,
       })
 
-      // Redimensionner l'image avec sharp
       await sharp(Application.tmpPath() + '/' + fileName)
         .resize(104)
         .toFile(resizedImagePath)
 
-      // Supprimer l'image originale téléchargée temporairement
       await fs.unlink(Application.tmpPath() + '/' + fileName)
 
-      return response.ok({ path: resizedFileName }) // Renvoyez le chemin du fichier redimensionné
+      return response.ok({ path: resizedFileName })
     } catch (error) {
       throw new APIException("Erreur durant l'upload", 500)
     }

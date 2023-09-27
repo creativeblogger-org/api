@@ -7,12 +7,10 @@ import fs from 'fs/promises'
 import sharp from 'sharp'
 
 export default class UsersController {
-  // Returns the user currently logged in.
   public async me({ auth }: HttpContextContract) {
     return auth.user!
   }
 
-  // Deletes the user.
   public async delete({ response, auth }: HttpContextContract) {
     if (auth.user?.permission === 3) {
       throw new APIException(
@@ -26,12 +24,10 @@ export default class UsersController {
   }
 
   public async update({ request, response, auth }: HttpContextContract) {
-    // Retrieves the essential elements to update.
     const { email, username, password } = request.only(['email', 'username', 'password'])
 
     const user = auth.user!
 
-    // Update email and username if provided.
     if (
       email &&
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$/.test(
@@ -63,13 +59,11 @@ export default class UsersController {
     } else if (password && password.length <= 5) {
       throw new APIException('Le mot de passe doit faire plus de 5 caractères.')
     }
-    // Updates the user.
     await auth.user!.merge(user).save()
 
     return response.noContent()
   }
 
-  // Retrieves the logs of the user.
   public async logs({ auth }: HttpContextContract) {
     return await Log.findBy('user', auth.user!.id)
   }
@@ -93,14 +87,13 @@ export default class UsersController {
     try {
       await image.move(Application.tmpPath(), {
         name: fileName,
-        overwrite: true, // Cette option permettra de remplacer le fichier s'il existe déjà
+        overwrite: true,
       })
 
       await sharp(Application.tmpPath() + '/' + fileName)
         .resize(500, 500)
         .toFile(resizedImagePath)
 
-      // Supprimer l'image originale téléchargée temporairement
       await fs.unlink(Application.tmpPath() + '/' + fileName)
 
       user.pp = 'https://api.creativeblogger.org/public/users/' + fileName
@@ -116,14 +109,11 @@ export default class UsersController {
     const imageName = request.param('imageName')
 
     try {
-      // Vérifiez si le fichier existe avant de renvoyer une réponse
       const imagePath = Application.publicPath(`/users/${imageName}` + '.png')
       await fs.access(imagePath)
 
-      // Renvoyer le fichier image si tout est bon
       return response.download(imagePath)
     } catch (error) {
-      // Si le fichier n'existe pas ou s'il y a une autre erreur, renvoyer une réponse 404
       throw new APIException("L'image n'a pas été trouvée...", 404)
     }
   }
@@ -136,11 +126,9 @@ export default class UsersController {
     }
 
     try {
-      // Supprimer le fichier image associé à l'utilisateur
-      const imagePath = `users/${user.id}.png` // Remplacez "ext" par l'extension du fichier (par exemple, jpg, png, etc.)
+      const imagePath = `users/${user.id}.png`
       await fs.unlink(Application.publicPath(imagePath))
 
-      // Mettre à jour le champ 'pp' du modèle User pour indiquer qu'il n'y a plus d'image
       user.pp = null
       await user.save()
 

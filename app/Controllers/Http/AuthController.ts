@@ -5,7 +5,6 @@ import User from 'App/Models/User'
 
 export default class AuthController {
   public async register({ request, auth }: HttpContextContract) {
-    // Definition of rules for data verification.
     const userSchema = schema.create({
       username: schema.string({ trim: true }, [
         rules.unique({
@@ -35,7 +34,6 @@ export default class AuthController {
       birthdate: schema.date(),
     })
 
-    // Verification of the data provided by the user.
     const data = await request.validate({
       schema: userSchema,
       messages: {
@@ -65,10 +63,8 @@ export default class AuthController {
   }
 
   public async login({ request, auth }: HttpContextContract) {
-    // Retrieves the essential elements to connect.
     const { username, password } = request.only(['username', 'password'])
 
-    // Login the user.
     try {
       return await auth.use('api').attempt(username, password)
     } catch {
