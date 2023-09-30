@@ -43,16 +43,16 @@ export default class PanelController {
         content: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(200)]),
         color: schema.string({trim: true}),
         link_text: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(10)]),
-        link: schema.string({ trim: true }, [rules.minLength(2), rules.maxLength(200)])
+        link: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(200)])
       }),
       messages: {
-        'text.minLenght': "Le text ne dois pas être en dessous de 10 caractères.",
-        'text.maxLenght': "Le text ne dois pas comporter plus de 200 caractères.",
+        'content.minLenght': "Le text ne dois pas être en dessous de 10 caractères.",
+        'content.maxLenght': "Le text ne dois pas comporter plus de 200 caractères.",
 
-        'linkText.minLenght': 'Le text du lien ne dois pas être en dessous de 1 caractère.',
-        'linkText.maxLenght': 'Le text du lien ne dois pas comporter plus de 10 caractère.',
+        'link_text.minLenght': 'Le text du lien ne dois pas être en dessous de 1 caractère.',
+        'link_text.maxLenght': 'Le text du lien ne dois pas comporter plus de 10 caractère.',
 
-        'link.minLenght': 'Le lien dois faire moins de 2 caractères.',
+        'link.minLenght': 'Le lien dois faire moins de 3 caractères.',
         'link.maxLenght': 'Le lien dois faire plus de 200 caractères.',
       },
     })
@@ -62,7 +62,7 @@ export default class PanelController {
     const banner = new Banner()
     banner.content = data.content
     banner.color = data.color
-    banner.text_link = data.link_text
+    banner.link_text = data.link_text
     banner.link = data.link
     await banner.save()
     return response.noContent()

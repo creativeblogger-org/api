@@ -6,7 +6,7 @@ export default class Banner extends BaseModel {
     @column()
     public color: string
     @column()
-    public text_link: string
+    public link_text: string
     @column()
     public link: string
 }
