@@ -40,9 +40,9 @@ export default class PanelController {
   public async banner({ request, auth, response }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({
-        color: schema.string(),
-        text: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(200)]),
-        linkText: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(10)]),
+        content: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(200)]),
+        color: schema.string({trim: true}),
+        link_text: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(10)]),
         link: schema.string({ trim: true }, [rules.minLength(2), rules.maxLength(200)])
       }),
       messages: {
@@ -60,9 +60,9 @@ export default class PanelController {
       throw new APIException("Vous n'avez pas la permission de faire ceci !")
     }
     const banner = new Banner()
-    banner.content = data.text
+    banner.content = data.content
     banner.color = data.color
-    banner.text_link = data.linkText
+    banner.text_link = data.link_text
     banner.link = data.link
     await banner.save()
     return response.noContent()
