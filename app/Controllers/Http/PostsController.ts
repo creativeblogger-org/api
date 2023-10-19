@@ -172,6 +172,7 @@ export default class PostsController {
     post.is_last = false
     post.required_age = data.required_age
     post.likes = 0
+    post.is_verified = 0
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -255,6 +256,17 @@ export default class PostsController {
     const post = await Post.findBy('slug', request.param('slug'))
     if (post) {
       post.likes = post.likes + 1
+      post.save()
+    }
+  }
+
+  public async verified({auth, request}: HttpContextContract) {
+    if(auth.user?.permission !== 3) {
+      throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
+    }
+    const post = await Post.findBy('slug', request.param('slug'))
+    if (post) {
+      post.is_verified = 1
       post.save()
     }
   }

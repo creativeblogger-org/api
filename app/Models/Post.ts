@@ -65,6 +65,9 @@ export default class Post extends BaseModel {
   @column()
   public comment_count: number
 
+  @column()
+  public is_verified: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
