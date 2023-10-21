@@ -10,6 +10,7 @@ Route.group(() => {
     Route.delete(':slug', 'PostsController.delete')
     Route.post('/upload', 'PostsController.upload')
     Route.post('/verified/:slug', 'PostsController.verified')
+    Route.post('/unverified/:slug', 'PostsController.unverified')
 
     Route.post(':slug/comment', 'CommentsController.new')
   }).middleware('auth')

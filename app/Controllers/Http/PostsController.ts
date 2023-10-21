@@ -270,4 +270,15 @@ export default class PostsController {
       post.save()
     }
   }
+
+  public async unverified({auth, request}: HttpContextContract) {
+    if(auth.user?.permission !== 3) {
+      throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
+    }
+    const post = await Post.findBy('slug', request.param('slug'))
+    if (post) {
+      post.is_verified = 0
+      post.save()
+    }
+  }
 }
