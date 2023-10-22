@@ -9,6 +9,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import Application from '@ioc:Adonis/Core/Application'
 import sharp from 'sharp'
 import fs from 'fs/promises'
+import Like from 'App/Models/Like'
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
@@ -171,7 +172,6 @@ export default class PostsController {
     post.image = data.image
     post.is_last = false
     post.required_age = data.required_age
-    post.likes = 0
     post.is_verified = 0
     await post.related('author').associate(auth.user!)
     await post.save()
@@ -252,16 +252,47 @@ export default class PostsController {
     }
   }
 
-  public async like({ request }: HttpContextContract) {
-    const post = await Post.findBy('slug', request.param('slug'))
-    if (post) {
-      post.likes = post.likes + 1
-      post.save()
+  public async like({ auth, request }: HttpContextContract) {
+    const post = await Post.findBy('id', request.param('id'))
+    const user = auth.user
+
+    if (post && user) {
+      const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
+
+      if(existingLike) {
+        throw new APIException("Vous avez déjà liké ce post !", 401)
+      }
+
+      const like = new Like()
+      like.post = post.id
+      await like.related('user').associate(auth.user!)
+      await like.save()
+
+      post.likes += 1
+      await post.save();
     }
   }
 
-  public async verified({auth, request}: HttpContextContract) {
-    if(auth.user?.permission !== 3) {
+  public async unlike({auth, request}: HttpContextContract) {
+    const post = await Post.findBy('id', request.param('id'))
+    const user = auth.user
+
+    if (post && user) {
+      const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
+
+      if(!existingLike) {
+        throw new APIException("Vous n'avez pas liké ce post !", 401)
+      }
+
+      await existingLike.delete()
+
+      post.likes -= 1
+      await post.save();
+    } 
+  }
+
+  public async verified({ auth, request }: HttpContextContract) {
+    if (auth.user?.permission !== 3) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
     const post = await Post.findBy('slug', request.param('slug'))
@@ -271,8 +302,8 @@ export default class PostsController {
     }
   }
 
-  public async unverified({auth, request}: HttpContextContract) {
-    if(auth.user?.permission !== 3) {
+  public async unverified({ auth, request }: HttpContextContract) {
+    if (auth.user?.permission !== 3) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
     const post = await Post.findBy('slug', request.param('slug'))
