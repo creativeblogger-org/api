@@ -43,6 +43,9 @@ export default class Post extends BaseModel {
   public required_age: number
 
   @column()
+  public views: number
+
+  @column()
   @slugify({
     strategy: 'dbIncrement',
     fields: ['title'],

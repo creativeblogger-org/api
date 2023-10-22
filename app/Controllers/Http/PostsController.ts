@@ -109,6 +109,9 @@ export default class PostsController {
 
     response.header('nbComments', commentCount.toString())
 
+    post.views += 1
+    await post.save()
+
     return post
   }
 
