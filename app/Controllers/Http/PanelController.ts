@@ -37,6 +37,16 @@ export default class PanelController {
     return await posts
   }
 
+  public async listAskCertifPost({auth}: HttpContextContract) {
+    if(auth.user?.permission !== 3) {
+      throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
+    }
+
+    let posts = Post.findBy("ask_verif", 1)
+
+    return posts
+  }
+
   public async banner({ request, auth, response }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({

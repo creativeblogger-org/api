@@ -46,6 +46,9 @@ export default class Post extends BaseModel {
   public views: number
 
   @column()
+  public ask_verif: number
+
+  @column()
   @slugify({
     strategy: 'dbIncrement',
     fields: ['title'],
