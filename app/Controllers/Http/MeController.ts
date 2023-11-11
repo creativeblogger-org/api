@@ -150,7 +150,7 @@ export default class UsersController {
 
     const link = request.param('link')
 
-    user.buymeacoffee = link
+    user.buymeacoffee = `https://buymeacoffee.com/${link}`
     await user.save()
 
     return response.noContent()
