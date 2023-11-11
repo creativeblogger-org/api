@@ -8,6 +8,7 @@ Route.group(() => {
     Route.get('/', 'MeController.me')
     Route.put('/', 'MeController.update')
     Route.delete('/', 'MeController.delete')
+    Route.post('/buymeacoffee/:link', 'MeController.buymeacoffee')
     Route.delete('/delete', 'MeController.deleteImage')
 
     Route.get('logs', 'MeController.logs')

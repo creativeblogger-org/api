@@ -5,6 +5,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import User from 'App/Models/User'
 import fs from 'fs/promises'
 import sharp from 'sharp'
+import Permissions from 'Contracts/Enums/Permissions'
 
 export default class UsersController {
   public async me({ auth }: HttpContextContract) {
@@ -136,5 +137,22 @@ export default class UsersController {
     } catch (error) {
       throw new APIException('Erreur dans le serveur', 500)
     }
+  }
+
+  public async buymeacoffee({request, auth, response}: HttpContextContract) {
+    const user = auth.user
+    if(!user) {
+      throw new APIException("Vous n'êtes pas connectés !", 401)
+    }
+    if(user!.permission < Permissions.Redactor) {
+      throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
+    }
+
+    const link = request.param('link')
+
+    user.buymeacoffee = link
+    await user.save()
+
+    return response.noContent()
   }
 }
