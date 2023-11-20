@@ -24,10 +24,10 @@ export default class GlobalController {
     if(post.views < 50) {
         throw new APIException("Votre post n'est pas éligible à la certification")
     }
-    if(post.ask_verif === 1) {
+    if(post.ask_verif === true) {
         throw new APIException("Le post est déjà sous demande de certification")
     }
-    post.ask_verif = 1
+    post.ask_verif = true
     await post.save()
 
     return response.noContent()
