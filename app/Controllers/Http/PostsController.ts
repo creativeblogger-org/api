@@ -38,7 +38,7 @@ export default class PostsController {
       },
     })
 
-    let query = Post.query().orderBy('created_at', 'desc').preload('author')
+    let query = Post.query().orderBy('created_at', 'desc').preload('author').select(['id', 'title', 'slug', 'created_at', 'updated_at', 'is_verified', 'image', 'description', 'author'])
     let totalPosts = Database.from('posts')
 
     if (auth.user) {
@@ -84,13 +84,13 @@ export default class PostsController {
       totalPosts = totalPosts.where('author', data.user)
     }
 
-    var slt = await query
+    var posts = await query
 
-    var slt2 = await totalPosts.count('* as total')
+    var nbOfPosts = await totalPosts.count('* as total')
 
-    response.header('nbposts', slt2[0]?.total || 0)
+    response.header('nbposts', nbOfPosts[0]?.total || 0)
 
-    return slt
+    return posts
   }
 
   public async get({ request, response }: HttpContextContract) {

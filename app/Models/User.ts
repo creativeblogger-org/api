@@ -13,7 +13,7 @@ export default class User extends BaseModel {
   @column()
   public pp: string | null
 
-  @column()
+  @column({ serializeAs: null })
   public email: string
 
   @column({ serializeAs: null })
@@ -28,13 +28,13 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public rememberMeToken: string | null
 
-  @column.dateTime()
+  @column.dateTime({ serializeAs: null })
   public birthdate: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   public updatedAt: DateTime
 
   @beforeSave()
