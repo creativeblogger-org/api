@@ -38,7 +38,7 @@ export default class PostsController {
       },
     })
 
-    let query = Post.query().orderBy('created_at', 'desc').preload('author').select(['id', 'title', 'slug', 'created_at', 'updated_at', 'is_verified', 'image', 'description', 'author'])
+    let query = Post.query().orderBy('created_at', 'desc').preload('author').select(['id', 'title', 'slug', 'created_at', 'updated_at', 'is_verified', 'image', 'description', 'author', 'likes'])
     let totalPosts = Database.from('posts')
 
     if (auth.user) {

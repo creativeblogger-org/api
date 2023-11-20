@@ -23,7 +23,7 @@ export default class PanelController {
       },
     })
 
-    let posts = Post.query().orderBy('created_at', 'desc').preload('author')
+    let posts = Post.query().orderBy('created_at', 'desc').preload('author').select(['id', 'title', 'slug', 'created_at', 'updated_at', 'views', 'likes', 'image', 'description', 'author'])
 
     if (data.limit && !data.page) {
       await posts.limit(data.limit)

@@ -52,7 +52,7 @@ export default class Comment extends BaseModel {
         {
           author: {
             fields: {
-              omit: ['email', 'created_at', 'updated_at'],
+              omit: ['email', 'birthdate', 'created_at', 'updated_at'],
             },
           },
         },
