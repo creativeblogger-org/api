@@ -106,15 +106,17 @@ export default class PostsController {
 
     const user = auth.user
 
-    post.is_liked = false
+    let has_liked: boolean = false
 
     if (post && user) {
       const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
 
       if(existingLike) {
-        post.is_liked = true
+        has_liked = true
       }
     }
+
+    response.header('has_liked', has_liked)
 
     const totalComments = await Database.from('comments').where('post', post.id).count('* as total')
     const commentCount = totalComments[0]?.total || 0
