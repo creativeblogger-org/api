@@ -89,11 +89,11 @@ export default class PostsController {
     var nbOfPosts = await totalPosts.count('* as total')
 
     response.header('nbposts', nbOfPosts[0]?.total || 0)
-
+    
     return posts
   }
 
-  public async get({ request, response }: HttpContextContract) {
+  public async get({ request, response, auth }: HttpContextContract) {
     const post = await Post.query()
       .preload('author')
       .preload('comments', (query) => query.limit(20))
@@ -102,6 +102,18 @@ export default class PostsController {
 
     if (!post) {
       throw new APIException('Le post demandé est introuvable.', 404)
+    }
+
+    const user = auth.user
+
+    post.isLiked = false
+
+    if (post && user) {
+      const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
+
+      if(existingLike) {
+        post.isLiked = true
+      }
     }
 
     const totalComments = await Database.from('comments').where('post', post.id).count('* as total')

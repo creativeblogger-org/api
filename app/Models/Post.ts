@@ -49,6 +49,9 @@ export default class Post extends BaseModel {
   public ask_verif: boolean
 
   @column()
+  public isLiked: boolean
+
+  @column()
   @slugify({
     strategy: 'dbIncrement',
     fields: ['title'],
