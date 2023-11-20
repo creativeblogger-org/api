@@ -175,7 +175,10 @@ export default class PostsController {
     post.image = data.image
     post.is_last = false
     post.required_age = data.required_age
-    post.is_verified = 0
+    post.is_verified = false
+    post.ask_verif = false
+    post.views = 0
+    post.likes = 0
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -300,7 +303,7 @@ export default class PostsController {
     }
     const post = await Post.findBy('slug', request.param('slug'))
     if (post) {
-      post.is_verified = 1
+      post.is_verified = true
       post.save()
     }
   }
@@ -311,7 +314,7 @@ export default class PostsController {
     }
     const post = await Post.findBy('slug', request.param('slug'))
     if (post) {
-      post.is_verified = 0
+      post.is_verified = false
       post.save()
     }
   }

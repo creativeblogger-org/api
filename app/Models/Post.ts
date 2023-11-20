@@ -46,7 +46,7 @@ export default class Post extends BaseModel {
   public views: number
 
   @column()
-  public ask_verif: number
+  public ask_verif: boolean
 
   @column()
   @slugify({
@@ -72,7 +72,7 @@ export default class Post extends BaseModel {
   public comment_count: number
 
   @column()
-  public is_verified: number
+  public is_verified: boolean
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

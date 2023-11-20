@@ -42,7 +42,12 @@ export default class PanelController {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
 
-    let posts = Post.findBy("ask_verif", 1)
+    const posts = await Post.query()
+      .preload('author')
+      .preload('comments', (query) => query.limit(20))
+      .where('ask_verif', '=', true)
+      .select(['id', 'title', 'slug', 'created_at', 'updated_at', 'views', 'likes', 'image', 'description', 'author'])
+      .first()
 
     return posts
   }
