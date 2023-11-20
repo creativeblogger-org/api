@@ -106,13 +106,13 @@ export default class PostsController {
 
     const user = auth.user
 
-    post.isLiked = false
+    post.is_liked = false
 
     if (post && user) {
       const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
 
       if(existingLike) {
-        post.isLiked = true
+        post.is_liked = true
       }
     }
 

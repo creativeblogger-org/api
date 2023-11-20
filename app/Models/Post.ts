@@ -48,8 +48,7 @@ export default class Post extends BaseModel {
   @column()
   public ask_verif: boolean
 
-  @column()
-  public isLiked: boolean
+  public is_liked: boolean
 
   @column()
   @slugify({
