@@ -98,6 +98,7 @@ export default class PostsController {
       .preload('author')
       .preload('comments', (query) => query.limit(20))
       .where('slug', '=', request.param('slug'))
+      .select(['id', 'title', 'slug', 'created_at', 'updated_at', 'is_verified', 'image', 'description', 'author', 'likes'])
       .first()
 
     if (!post) {
@@ -290,6 +291,8 @@ export default class PostsController {
 
       post.likes += 1
       await post.save();
+
+      return post.likes
     }
   }
 
@@ -308,6 +311,8 @@ export default class PostsController {
 
       post.likes -= 1
       await post.save();
+
+      return post.likes
     } 
   }
 
