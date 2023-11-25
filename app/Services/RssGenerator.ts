@@ -1,7 +1,6 @@
 import Post from 'App/Models/Post';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import marked from 'marked';
 
 export default class RssGenerator {      
   public generateRss(posts: Post[]): string {
@@ -12,7 +11,6 @@ export default class RssGenerator {
             <title>${post.title}</title>
             <link>https://creativeblogger.org/posts/${post.slug}</link>
             <description>${post.description}</description>
-            <description>${marked(post.content)}</description>
             <pubDate>${post.createdAt}</pubDate>
             <author>${post.author.username}</author>
           </item>
