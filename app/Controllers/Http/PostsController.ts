@@ -10,6 +10,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import sharp from 'sharp'
 import fs from 'fs/promises'
 import Like from 'App/Models/Like'
+import RssGenerator from 'App/Services/RssGenerator';
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
@@ -209,6 +210,13 @@ export default class PostsController {
     } catch (error) {
       console.error('Erreur lors de la publication sur Mastodon :', error)
     }
+
+    const allPosts = await Post.query().orderBy('created_at', 'desc').limit(10);
+  
+    const rssGenerator = new RssGenerator();
+    const rssFeed = rssGenerator.generateRss(allPosts);
+
+    await rssGenerator.saveRssToFile(rssFeed);
 
     return response.noContent()
   }
