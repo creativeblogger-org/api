@@ -1,14 +1,13 @@
-import Post from 'App/Models/Post'
-import { promises as fsPromises } from 'fs'
-import path from 'path'
-import { Marked } from "@ts-stack/markdown";
+import Post from 'App/Models/Post';
+import { promises as fsPromises } from 'fs';
+import path from 'path';
+import marked from 'marked';
 
-export default class RssGenerator {
-
+export default class RssGenerator {      
   public generateRss(posts: Post[]): string {
     const rssItems = posts
       .map((post) => {
-        const htmlContent = Marked.parse(post.content)
+        const htmlContent = marked(post.content)
         const item = `
           <item>
             <title>${post.title}</title>
@@ -18,10 +17,10 @@ export default class RssGenerator {
             <pubDate>${post.createdAt}</pubDate>
             <author>${post.author.username}</author>
           </item>
-        `
-        return item
+        `;
+        return item;
       })
-      .join('')
+      .join('');
 
     const rss = `
       <rss version="2.0">
@@ -33,14 +32,14 @@ export default class RssGenerator {
           ${rssItems}
         </channel>
       </rss>
-    `
+    `;
 
-    return rss
+    return rss;
   }
 
   public async saveRssToFile(rss: string): Promise<void> {
-    const rssFilePath = path.join(__dirname, '../../rss.xml')
+    const rssFilePath = path.join(__dirname, '../../rss.xml');
 
-    await fsPromises.writeFile(rssFilePath, rss, 'utf-8')
+    await fsPromises.writeFile(rssFilePath, rss, 'utf-8');
   }
 }
