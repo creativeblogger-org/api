@@ -7,13 +7,12 @@ export default class RssGenerator {
   public generateRss(posts: Post[]): string {
     const rssItems = posts
       .map((post) => {
-        const htmlContent = marked(post.content)
         const item = `
           <item>
             <title>${post.title}</title>
             <link>https://creativeblogger.org/posts/${post.slug}</link>
             <description>${post.description}</description>
-            <description>${htmlContent}</description>
+            <description>${marked(post.content)}</description>
             <pubDate>${post.createdAt}</pubDate>
             <author>${post.author.username}</author>
           </item>
