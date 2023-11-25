@@ -16,10 +16,6 @@ export default class RssGenerator {
       copyright: 'Copyleft, you can use the content',
       updated: new Date(2023, 11, 25),
       generator: 'awesome',
-      feedLinks: {
-        json: 'https://example.com/json',
-        atom: 'https://example.com/atom',
-      },
       author: {
         name: 'Creative Blogger Org',
         email: 'contact@creativeblogger.org',
