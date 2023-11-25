@@ -1,17 +1,14 @@
 import Post from 'App/Models/Post'
 import { promises as fsPromises } from 'fs'
 import path from 'path'
-import marked from 'marked'
+import { Marked } from "@ts-stack/markdown";
 
 export default class RssGenerator {
-  private convertMarkdownToHtml(content: string): string {
-    return marked(content)
-  }
 
   public generateRss(posts: Post[]): string {
     const rssItems = posts
       .map((post) => {
-        const htmlContent = this.convertMarkdownToHtml(post.content)
+        const htmlContent = Marked.parse(post.content)
         const item = `
           <item>
             <title>${post.title}</title>

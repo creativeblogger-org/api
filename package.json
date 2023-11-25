@@ -61,6 +61,7 @@
     "@adonisjs/lucid": "^18.3.0",
     "@adonisjs/lucid-slugify": "^2.2.1",
     "@adonisjs/repl": "^3.1.0",
+    "@ts-stack/markdown": "^1.5.0",
     "dotenv": "^16.3.1",
     "feed": "^4.2.2",
     "luxon": "^3.3.0",
