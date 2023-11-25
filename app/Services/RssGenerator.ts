@@ -2,13 +2,8 @@ import Post from 'App/Models/Post'
 import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { Feed } from 'feed'
-import { Marked } from '@ts-stack/markdown'
 
 export default class RssGenerator {
-  private convertMarkdownToHtml(content: string): string {
-    return Marked.parse(content)
-  }
-
   public generateRss(posts: Post[]) {
     const feed = new Feed({
       title: 'Creative Blogger',
@@ -32,13 +27,12 @@ export default class RssGenerator {
       },
     })
     posts.forEach((post) => {
-      const htmlContent = this.convertMarkdownToHtml(post.content)
       feed.addItem({
         title: post.title,
         id: `https://creativeblogger.org/posts/${post.slug}`,
         link: `https://creativeblogger.org/posts/${post.slug}`,
         description: post.description,
-        content: htmlContent,
+        content: post.content,
         author: [
           {
             name: post.author.username,
