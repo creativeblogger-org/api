@@ -1712,9 +1712,9 @@ chalk@^4.0.0:
     supports-color "^7.1.0"
 
 chalk@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.npmjs.org/chalk/-/chalk-5.2.0.tgz"
-  integrity sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==
+  version "5.3.0"
+  resolved "https://registry.npmjs.org/chalk/-/chalk-5.3.0.tgz"
+  integrity sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==
 
 change-case@^4.1.2:
   version "4.1.2"
@@ -4454,7 +4454,7 @@ marked-terminal@^5.1.1:
     node-emoji "^1.11.0"
     supports-hyperlinks "^2.3.0"
 
-"marked@^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0", marked@^4.2.12:
+"marked@^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0", marked@^4.2.12, marked@^4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/marked/-/marked-4.3.0.tgz"
   integrity sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==
@@ -6627,9 +6627,9 @@ type-fest@^0.21.3:
   integrity sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==
 
 type-fest@^3.0.0:
-  version "3.10.0"
-  resolved "https://registry.npmjs.org/type-fest/-/type-fest-3.10.0.tgz"
-  integrity sha512-hmAPf1datm+gt3c2mvu0sJyhFy6lTkIGf0GzyaZWxRLnabQfPUqg6tF95RPg6sLxKI7nFLGdFxBcf2/7+GXI+A==
+  version "3.13.1"
+  resolved "https://registry.npmjs.org/type-fest/-/type-fest-3.13.1.tgz"
+  integrity sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==
 
 type-is@^1.6.18, type-is@^1.6.4:
   version "1.6.18"
@@ -6658,11 +6658,6 @@ typedarray@^0.0.6:
   version "4.6.4"
   resolved "https://registry.npmjs.org/typescript/-/typescript-4.6.4.tgz"
   integrity sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==
-
-typescript@>=4.7.0:
-  version "5.0.4"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-5.0.4.tgz"
-  integrity sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==
 
 uid-safe@2.1.5:
   version "2.1.5"
