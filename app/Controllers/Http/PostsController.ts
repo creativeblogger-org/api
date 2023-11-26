@@ -113,6 +113,25 @@ export default class PostsController {
       .preload('author')
       .preload('comments', (query) => query.limit(20))
       .where('slug', '=', request.param('slug'))
+      .select([
+        'id',
+        'title',
+        'slug',
+        'content',
+        'tags',
+        'required_age',
+        'created_at',
+        'updated_at',
+        'is_verified',
+        'image',
+        'description',
+        'author',
+        'likes',
+        'views',
+        'comment_count',
+        'has_permission',
+        'comments',
+      ])
       .first()
 
     if (!post) {
