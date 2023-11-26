@@ -128,7 +128,6 @@ export default class PostsController {
         'author',
         'likes',
         'views',
-        'comments',
       ])
       .first()
 
