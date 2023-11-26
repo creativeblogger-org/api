@@ -128,7 +128,6 @@ export default class PostsController {
         'author',
         'likes',
         'views',
-        'comment_count',
         'has_permission',
         'comments',
       ])
