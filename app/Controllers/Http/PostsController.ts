@@ -10,7 +10,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import sharp from 'sharp'
 import fs from 'fs/promises'
 import Like from 'App/Models/Like'
-import RssGenerator from 'App/Services/RssGenerator';
+import RssGenerator from 'App/Services/RssGenerator'
 
 const M = new Mastodon({
   client_key: Env.get('MASTODON_CLIENT_KEY'),
@@ -39,7 +39,21 @@ export default class PostsController {
       },
     })
 
-    let query = Post.query().orderBy('created_at', 'desc').preload('author').select(['id', 'title', 'slug', 'created_at', 'updated_at', 'is_verified', 'image', 'description', 'author', 'likes'])
+    let query = Post.query()
+      .orderBy('created_at', 'desc')
+      .preload('author')
+      .select([
+        'id',
+        'title',
+        'slug',
+        'created_at',
+        'updated_at',
+        'is_verified',
+        'image',
+        'description',
+        'author',
+        'likes',
+      ])
     let totalPosts = Database.from('posts')
 
     if (auth.user) {
@@ -90,7 +104,7 @@ export default class PostsController {
     var nbOfPosts = await totalPosts.count('* as total')
 
     response.header('nbposts', nbOfPosts[0]?.total || 0)
-    
+
     return posts
   }
 
@@ -112,7 +126,7 @@ export default class PostsController {
     if (post && user) {
       const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
 
-      if(existingLike) {
+      if (existingLike) {
         has_liked = true
       }
     }
@@ -138,6 +152,8 @@ export default class PostsController {
       title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
 
       content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(10000)]),
+
+      html_content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(15000)]),
 
       description: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(100)]),
 
@@ -171,6 +187,9 @@ export default class PostsController {
         'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
         'content.maxLength': 'Le contenu doit faire au maximum 10000 caractères.',
 
+        'html_content.minLength': 'Le contenu doit faire au moins 200 caractères.',
+        'html_content.maxLength': 'Le contenu doit faire au maximum 10000 caractères.',
+
         'slug.minLength': 'Le slug doit faire au moins 3 caractères.',
         'slug.maxLength': 'Le slug doit faire au maximum 30 caractères.',
 
@@ -187,6 +206,7 @@ export default class PostsController {
     post.description = data.description
     post.tags = data.tags
     post.content = data.content
+    post.html_content = data.html_content
     post.image = data.image
     post.is_last = false
     post.required_age = data.required_age
@@ -211,12 +231,12 @@ export default class PostsController {
       console.error('Erreur lors de la publication sur Mastodon :', error)
     }
 
-    const allPosts = await Post.query().orderBy('created_at', 'desc').limit(10);
-  
-    const rssGenerator = new RssGenerator();
-    const rssFeed = rssGenerator.generateRss(allPosts);
+    const allPosts = await Post.query().orderBy('created_at', 'desc').limit(10)
 
-    await rssGenerator.saveRssToFile(rssFeed);
+    const rssGenerator = new RssGenerator()
+    const rssFeed = rssGenerator.generateRss(allPosts)
+
+    await rssGenerator.saveRssToFile(rssFeed)
 
     return response.noContent()
   }
@@ -287,8 +307,8 @@ export default class PostsController {
     if (post && user) {
       const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
 
-      if(existingLike) {
-        throw new APIException("Vous avez déjà liké ce post !", 401)
+      if (existingLike) {
+        throw new APIException('Vous avez déjà liké ce post !', 401)
       }
 
       const like = new Like()
@@ -297,30 +317,30 @@ export default class PostsController {
       await like.save()
 
       post.likes += 1
-      await post.save();
+      await post.save()
 
       return post.likes
     }
   }
 
-  public async unlike({auth, request}: HttpContextContract) {
+  public async unlike({ auth, request }: HttpContextContract) {
     const post = await Post.findBy('id', request.param('id'))
     const user = auth.user
 
     if (post && user) {
       const existingLike = await Like.query().where('user', user.id).where('post', post.id).first()
 
-      if(!existingLike) {
+      if (!existingLike) {
         throw new APIException("Vous n'avez pas liké ce post !", 401)
       }
 
       await existingLike.delete()
 
       post.likes -= 1
-      await post.save();
+      await post.save()
 
       return post.likes
-    } 
+    }
   }
 
   public async verified({ auth, request }: HttpContextContract) {

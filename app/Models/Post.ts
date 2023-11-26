@@ -66,6 +66,9 @@ export default class Post extends BaseModel {
   public content: string
 
   @column()
+  public html_content: string
+
+  @column()
   public is_last: boolean
 
   @column()
@@ -97,7 +100,7 @@ export default class Post extends BaseModel {
       ...this.serializeRelations(
         {
           author: {
-            fields: {omit: ['email', 'updated_at', 'birthdate']},
+            fields: { omit: ['email', 'updated_at', 'birthdate'] },
           },
           comments: { fields: { omit: ['post'] } },
         },
