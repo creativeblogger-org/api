@@ -18,9 +18,7 @@
     "./start/kernel",
     {
       "file": "./start/validator",
-      "environment": [
-        "web"
-      ]
+      "environment": ["web"]
     }
   ],
   "providers": [
@@ -29,30 +27,17 @@
     "@adonisjs/lucid",
     "@adonisjs/auth",
     "@adonisjs/lucid-slugify",
-    "@adonisjs/ally",
-    "@adonisjs/view"
+    "@adonisjs/ally"
   ],
-  "aceProviders": [
-    "@adonisjs/repl"
-  ],
+  "aceProviders": ["@adonisjs/repl"],
   "tests": {
     "suites": [
       {
         "name": "functional",
-        "files": [
-          "tests/functional/**/*.spec(.ts|.js)"
-        ],
+        "files": ["tests/functional/**/*.spec(.ts|.js)"],
         "timeout": 60000
       }
     ]
   },
-  "testProviders": [
-    "@japa/preset-adonis/TestsProvider"
-  ],
-  "metaFiles": [
-    {
-      "pattern": "resources/views/**/*.edge",
-      "reloadServer": false
-    }
-  ]
+  "testProviders": ["@japa/preset-adonis/TestsProvider"]
 }
