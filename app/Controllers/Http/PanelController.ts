@@ -1,8 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import APIException from 'App/Exceptions/APIException'
-import Banner from 'App/Models/Banner'
 import Post from 'App/Models/Post'
+import RssGenerator from 'App/Services/RssGenerator'
+import Permissions from 'Contracts/Enums/Permissions'
 
 export default class PanelController {
   public async list({ request, auth }: HttpContextContract) {
@@ -23,7 +24,21 @@ export default class PanelController {
       },
     })
 
-    let posts = Post.query().orderBy('created_at', 'desc').preload('author').select(['id', 'title', 'slug', 'created_at', 'updated_at', 'views', 'likes', 'image', 'description', 'author'])
+    let posts = Post.query()
+      .orderBy('created_at', 'desc')
+      .preload('author')
+      .select([
+        'id',
+        'title',
+        'slug',
+        'created_at',
+        'updated_at',
+        'views',
+        'likes',
+        'image',
+        'description',
+        'author',
+      ])
 
     if (data.limit && !data.page) {
       await posts.limit(data.limit)
@@ -37,8 +52,8 @@ export default class PanelController {
     return await posts
   }
 
-  public async listAskCertifPost({auth}: HttpContextContract) {
-    if(auth.user?.permission !== 3) {
+  public async listAskCertifPost({ auth }: HttpContextContract) {
+    if (auth.user?.permission !== 3) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
 
@@ -46,49 +61,35 @@ export default class PanelController {
       .preload('author')
       .preload('comments', (query) => query.limit(20))
       .where('ask_verif', '=', true)
-      .select(['id', 'title', 'slug', 'created_at', 'updated_at', 'views', 'likes', 'image', 'description', 'author'])
+      .select([
+        'id',
+        'title',
+        'slug',
+        'created_at',
+        'updated_at',
+        'views',
+        'likes',
+        'image',
+        'description',
+        'author',
+      ])
       .first()
 
     return posts
   }
 
-  public async banner({ request, auth, response }: HttpContextContract) {
-    const data = await request.validate({
-      schema: schema.create({
-        content: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(200)]),
-        color: schema.string({trim: true}),
-        link_text: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(10)]),
-        link: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(200)])
-      }),
-      messages: {
-        'content.minLenght': "Le text ne dois pas être en dessous de 10 caractères.",
-        'content.maxLenght': "Le text ne dois pas comporter plus de 200 caractères.",
-
-        'link_text.minLenght': 'Le text du lien ne dois pas être en dessous de 1 caractère.',
-        'link_text.maxLenght': 'Le text du lien ne dois pas comporter plus de 10 caractère.',
-
-        'link.minLenght': 'Le lien dois faire moins de 3 caractères.',
-        'link.maxLenght': 'Le lien dois faire plus de 200 caractères.',
-      },
-    })
-    if (auth.user?.permission !== 3) {
-      throw new APIException("Vous n'avez pas la permission de faire ceci !")
+  public async generateRSS({ auth, response }: HttpContextContract) {
+    if (auth.user?.permission !== Permissions.Administrator) {
+      throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
-    const banner = new Banner()
-    banner.content = data.content
-    banner.color = data.color
-    banner.link_text = data.link_text
-    banner.link = data.link
-    await banner.save()
-    return response.noContent()
-  }
 
-  public async deleteBanner({ auth, response }: HttpContextContract) {
-    if (auth.user?.permission !== 3) {
-      throw new APIException("Vous n'avez pas la permission de faire ceci !")
-    }
-    const banner = Banner.query()
-     await banner.delete()
+    const allPosts = await Post.query().orderBy('created_at', 'desc').limit(10)
+
+    const rssGenerator = new RssGenerator()
+    const rssFeed = rssGenerator.generateRss(allPosts)
+
+    await rssGenerator.saveRssToFile(rssFeed)
+
     return response.noContent()
   }
 }

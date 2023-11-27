@@ -10,10 +10,20 @@ export default class RssGenerator {
           <item>
             <title>${post.title}</title>
             <link>https://creativeblogger.org/posts/${post.slug}</link>
-            <description>${post.description}</description>
-            <description>${post.html_content}</description>
+            <description><![CDATA[
+            <div style="display: flex; align-items: center;">
+             <div style="margin-right: 10px;">
+              <img src="${post.image}" alt="${post.title}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+             </div>
+             <div>
+              <h2>${post.description}</h2>
+             </div>
+            </div>
+            ]]>
+            </description>
             <pubDate>${post.createdAt}</pubDate>
-            <author>${post.author.username}</author>
+            <author><![CDATA[${post.author.username}]]></author>
+            <category><![CDATA[${post.tags}]]></category>
           </item>
         `
         return item
@@ -27,6 +37,13 @@ export default class RssGenerator {
           <link>https://creativeblogger.org</link>
           <description>Projet collaboratif entre bloggers</description>
           <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+          <image>
+            <url>https://creativeblogger.org/assets/logo2-0c8c0aee.png</url>
+            <title>BDM</title>
+            <link>https://creativeblogger.org</link>
+            <width>32</width>
+            <height>32</height>
+          </image> 
           ${rssItems}
         </channel>
       </rss>
