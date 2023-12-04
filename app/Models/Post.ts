@@ -66,9 +66,6 @@ export default class Post extends BaseModel {
   public content: string
 
   @column()
-  public html_content: string
-
-  @column()
   public is_last: boolean
 
   @column()

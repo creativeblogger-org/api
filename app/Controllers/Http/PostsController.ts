@@ -169,8 +169,6 @@ export default class PostsController {
 
       content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(10000)]),
 
-      html_content: schema.string({ trim: true }, [rules.minLength(200), rules.maxLength(15000)]),
-
       description: schema.string({ trim: true }, [rules.minLength(10), rules.maxLength(100)]),
 
       tags: schema.string({ trim: true }, [rules.minLength(1), rules.maxLength(15)]),
@@ -203,9 +201,6 @@ export default class PostsController {
         'content.minLength': 'Le contenu doit faire au moins 200 caractères.',
         'content.maxLength': 'Le contenu doit faire au maximum 10000 caractères.',
 
-        'html_content.minLength': 'Le contenu doit faire au moins 200 caractères.',
-        'html_content.maxLength': 'Le contenu doit faire au maximum 10000 caractères.',
-
         'slug.minLength': 'Le slug doit faire au moins 3 caractères.',
         'slug.maxLength': 'Le slug doit faire au maximum 30 caractères.',
 
@@ -222,7 +217,6 @@ export default class PostsController {
     post.description = data.description
     post.tags = data.tags
     post.content = data.content
-    post.html_content = data.html_content
     post.image = data.image
     post.is_last = false
     post.required_age = data.required_age
