@@ -13,7 +13,7 @@ export default class UsersController {
   }
 
   public async delete({ response, auth }: HttpContextContract) {
-    if (auth.user?.permission === 3) {
+    if (auth.user?.permission === Permissions.Administrator) {
       throw new APIException(
         'Vous êtes un administrateur, votre compte ne peut pas être supprimé !',
         403
@@ -139,12 +139,12 @@ export default class UsersController {
     }
   }
 
-  public async buymeacoffee({request, auth, response}: HttpContextContract) {
+  public async buymeacoffee({ request, auth, response }: HttpContextContract) {
     const user = auth.user
-    if(!user) {
+    if (!user) {
       throw new APIException("Vous n'êtes pas connectés !", 401)
     }
-    if(user!.permission < Permissions.Redactor) {
+    if (user!.permission < Permissions.Redactor) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
 

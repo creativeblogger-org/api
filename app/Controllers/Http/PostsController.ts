@@ -60,7 +60,7 @@ export default class PostsController {
       const today = new Date()
       const yearOfUser = today.getUTCFullYear() - auth.user.birthdate.year
       query = query.where('required_age', '<=', yearOfUser)
-      if (auth.user.permission > 0) {
+      if (auth.user.permission > Permissions.User) {
         query = Post.query().orderBy('created_at', 'desc').preload('author')
       }
     } else {
@@ -162,7 +162,7 @@ export default class PostsController {
 
   public async new({ request, response, auth }: HttpContextContract) {
     if (auth.user!.permission < Permissions.Redactor)
-      throw new APIException("Vous n'avez pas la permission de créer un article.", 403)
+      throw new APIException("Vous n'avez pas la permission de créer un article.", 401)
 
     const postSchema = schema.create({
       title: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(30)]),
@@ -256,7 +256,7 @@ export default class PostsController {
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
     if (!post.hasPermission)
-      throw new APIException("Vous n'avez pas la permission de modifier cet article.", 403)
+      throw new APIException("Vous n'avez pas la permission de modifier cet article.", 401)
 
     const { title, content, description, image, tags } = request.only([
       'title',
@@ -275,7 +275,7 @@ export default class PostsController {
     const post = await Post.findBy('slug', request.param('slug'))
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
-    if (!post.hasPermission) throw new APIException("Vous n'êtes pas l'auteur de cet article.", 403)
+    if (!post.hasPermission) throw new APIException("Vous n'êtes pas l'auteur de cet article.", 401)
 
     await post.delete()
     return response.noContent()
@@ -354,7 +354,7 @@ export default class PostsController {
   }
 
   public async verified({ auth, request }: HttpContextContract) {
-    if (auth.user?.permission !== 3) {
+    if (auth.user?.permission !== Permissions.Administrator) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
     const post = await Post.findBy('slug', request.param('slug'))
@@ -365,7 +365,7 @@ export default class PostsController {
   }
 
   public async unverified({ auth, request }: HttpContextContract) {
-    if (auth.user?.permission !== 3) {
+    if (auth.user?.permission !== Permissions.Administrator) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
     const post = await Post.findBy('slug', request.param('slug'))

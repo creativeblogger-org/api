@@ -3,13 +3,14 @@ import User from 'App/Models/User'
 import APIException from 'App/Exceptions/APIException'
 import Post from 'App/Models/Post'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
+import Permissions from 'Contracts/Enums/Permissions'
 
 export default class UsersController {
   public async list({ auth }: HttpContextContract) {
-    if (auth.user?.permission !== 3) {
+    if (auth.user?.permission !== Permissions.Administrator) {
       throw new APIException(
         "Vous n'avez pas la permission de visualiser l'ensemble des utilisateurs",
-        403
+        401
       )
     }
     return (await User.all()).map((user) => {
@@ -33,12 +34,12 @@ export default class UsersController {
   }
 
   public async delete({ request, response, auth }: HttpContextContract) {
-    if (auth.user?.permission !== 3)
-      throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
+    if (auth.user?.permission !== Permissions.Administrator)
+      throw new APIException('Seul un administrateur peut effectuer cette opération.', 401)
 
     const user: any = await User.findBy('username', request.param('username'))
-    if (user.permission === 3 || 2) {
-      throw new APIException('Vous ne pouvez pas supprimer un administrateur / modérateur !', 403)
+    if (user.permission === Permissions.Administrator || Permissions.Redactor) {
+      throw new APIException('Vous ne pouvez pas supprimer un administrateur / modérateur !', 401)
     }
     await user.delete()
     return response.noContent()
@@ -57,11 +58,14 @@ export default class UsersController {
     if (!user) throw new APIException("L'utilisateur demandé est introuvable.", 404)
 
     if (auth.user?.permission) {
-      if (auth.user?.permission < 2) {
-        throw new APIException('Seul un modérateur peut effectuer cette opération.', 403)
+      if (auth.user?.permission < Permissions.Redactor) {
+        throw new APIException('Seul un modérateur peut effectuer cette opération.', 401)
       }
-      if (auth.user?.permission < 3 && request.param('perms') > 1) {
-        throw new APIException('Seul un administrateur peut effectuer cette opération.', 403)
+      if (
+        auth.user?.permission < Permissions.Administrator &&
+        request.param('perms') > Permissions.Redactor
+      ) {
+        throw new APIException('Seul un administrateur peut effectuer cette opération.', 401)
       }
     }
 
@@ -90,7 +94,18 @@ export default class UsersController {
     let posts = Post.query()
       .orderBy('created_at', 'desc')
       .preload('author')
-      .select(['id', 'title', 'slug', 'created_at', 'updated_at', 'views', 'likes', 'image', 'description', 'author'])
+      .select([
+        'id',
+        'title',
+        'slug',
+        'created_at',
+        'updated_at',
+        'views',
+        'likes',
+        'image',
+        'description',
+        'author',
+      ])
       .where('author', '=', request.param('id'))
 
     if (data.limit && !data.page) {

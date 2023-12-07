@@ -7,8 +7,8 @@ import Permissions from 'Contracts/Enums/Permissions'
 
 export default class PanelController {
   public async list({ request, auth }: HttpContextContract) {
-    if (auth.user?.permission != 2 || 3) {
-      throw new APIException("Vous n'avez pas la permission requise", 403)
+    if (auth.user?.permission !== Permissions.Moderator || Permissions.Administrator) {
+      throw new APIException("Vous n'avez pas la permission requise", 401)
     }
     const data = await request.validate({
       schema: schema.create({
@@ -53,7 +53,7 @@ export default class PanelController {
   }
 
   public async listAskCertifPost({ auth }: HttpContextContract) {
-    if (auth.user?.permission !== 3) {
+    if (auth.user?.permission !== Permissions.Administrator) {
       throw new APIException("Vous n'avez pas la permission de faire ceci !", 401)
     }
 
