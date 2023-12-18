@@ -40,20 +40,6 @@ export default class PostsController {
     })
 
     let query = Post.query()
-      .orderBy('created_at', 'desc')
-      .preload('author')
-      .select([
-        'id',
-        'title',
-        'slug',
-        'created_at',
-        'updated_at',
-        'is_verified',
-        'image',
-        'description',
-        'author',
-        'likes',
-      ])
     let totalPosts = Database.from('posts')
 
     if (auth.user) {
@@ -99,7 +85,27 @@ export default class PostsController {
       totalPosts = totalPosts.where('author', data.user)
     }
 
-    var posts = await query
+    let posts = await query
+      .orderBy('created_at', 'desc')
+      .preload('author', (builder) => {
+        builder.select(['username', 'pp', 'permission', 'id', 'buymeacoffee'])
+      })
+      .select([
+        'id',
+        'title',
+        'slug',
+        'created_at',
+        'updated_at',
+        'is_verified',
+        'image',
+        'description',
+        'author_id',
+        'author_username',
+        'author_pp',
+        'author_permission',
+        'author_buymeacoffee',
+        'likes',
+      ])
 
     var nbOfPosts = await totalPosts.count('* as total')
 
