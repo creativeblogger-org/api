@@ -99,11 +99,7 @@ export default class PostsController {
         'is_verified',
         'image',
         'description',
-        'author_id',
-        'author_username',
-        'author_pp',
-        'author_permission',
-        'author_buymeacoffee',
+        'author',
         'likes',
       ])
 
