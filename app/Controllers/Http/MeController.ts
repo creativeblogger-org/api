@@ -62,9 +62,9 @@ export default class UsersController {
     }
 
     if (biography && biography.length <= 200) {
-      user.password = password
+      user.biography = biography
     } else if(biography.length > 200) {
-      throw new APIException('La description ne peut excéder 200 caractères.')
+      throw new APIException('La biographie ne peut excéder 200 caractères.')
     }
 
     await auth.user!.merge(user).save()
