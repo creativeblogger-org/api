@@ -20,6 +20,9 @@ export default class User extends BaseModel {
   public password: string
 
   @column()
+  public biography: string | null
+
+  @column()
   public permission: Permissions
 
   @column()

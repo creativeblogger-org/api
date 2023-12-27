@@ -1,4 +1,5 @@
 enum Permissions {
+  SuspendedAccount = -1,
   User = 0,
   Redactor = 1,
   Moderator = 2,

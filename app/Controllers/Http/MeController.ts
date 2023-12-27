@@ -25,7 +25,7 @@ export default class UsersController {
   }
 
   public async update({ request, response, auth }: HttpContextContract) {
-    const { email, username, password } = request.only(['email', 'username', 'password'])
+    const { email, username, password, biography } = request.only(['email', 'username', 'password', 'biography'])
 
     const user = auth.user!
 
@@ -60,6 +60,13 @@ export default class UsersController {
     } else if (password && password.length <= 5) {
       throw new APIException('Le mot de passe doit faire plus de 5 caractères.')
     }
+
+    if (biography && biography.length <= 200) {
+      user.password = password
+    } else if(biography.length > 200) {
+      throw new APIException('La description ne peut excéder 200 caractères.')
+    }
+
     await auth.user!.merge(user).save()
 
     return response.noContent()

@@ -4,6 +4,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import APIException from 'App/Exceptions/APIException'
 import Comment from 'App/Models/Comment'
 import Post from 'App/Models/Post'
+import Permissions from 'Contracts/Enums/Permissions'
 
 export default class CommentsController {
   public async list({ request, response }: HttpContextContract) {
@@ -31,6 +32,9 @@ export default class CommentsController {
   }
 
   public async new({ request, response, auth }: HttpContextContract) {
+    if(auth.user?.permission === Permissions.SuspendedAccount) {
+      throw new APIException("Votre compte est suspendu ! Vous ne pouvez pas commentez.")
+    }
     const post = await Post.findBy('slug', request.param('slug'))
     if (!post) throw new APIException('Le post demandé est introuvable.', 404)
 
