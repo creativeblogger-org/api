@@ -100,6 +100,7 @@ export default class PostsController {
         'image',
         'description',
         'author',
+        'tags',
         'likes',
       ])
 

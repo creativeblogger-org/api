@@ -38,6 +38,8 @@ export default class PanelController {
         'image',
         'description',
         'author',
+        'tags',
+        'views'
       ])
 
     if (data.limit && !data.page) {
