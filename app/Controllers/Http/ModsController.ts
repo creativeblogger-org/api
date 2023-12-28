@@ -1,3 +1,4 @@
+import Mail from '@ioc:Adonis/Addons/Mail'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import APIException from 'App/Exceptions/APIException'
 import User from 'App/Models/User'
@@ -15,6 +16,15 @@ export default class ModsController {
 
     target.permission = Permissions.SuspendedAccount
     target.merge(target).save()
+
+    await Mail.send((message) => {
+      message
+        .from('email.confirmation@creativeblogger.org')
+        .to(target.email)
+        .subject('Votre compte à été suspendu !')
+        .htmlView('emails/welcome', { name: 'Virk' })
+    })
+
 
     return response.noContent()
   }

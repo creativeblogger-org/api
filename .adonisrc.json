@@ -4,7 +4,8 @@
     "./commands",
     "@adonisjs/core/build/commands/index.js",
     "@adonisjs/repl/build/commands",
-    "@adonisjs/lucid/build/commands"
+    "@adonisjs/lucid/build/commands",
+    "@adonisjs/mail/build/commands"
   ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
   "aliases": {
@@ -18,7 +19,9 @@
     "./start/kernel",
     {
       "file": "./start/validator",
-      "environment": ["web"]
+      "environment": [
+        "web"
+      ]
     }
   ],
   "providers": [
@@ -27,17 +30,24 @@
     "@adonisjs/lucid",
     "@adonisjs/auth",
     "@adonisjs/lucid-slugify",
-    "@adonisjs/ally"
+    "@adonisjs/ally",
+    "@adonisjs/mail"
   ],
-  "aceProviders": ["@adonisjs/repl"],
+  "aceProviders": [
+    "@adonisjs/repl"
+  ],
   "tests": {
     "suites": [
       {
         "name": "functional",
-        "files": ["tests/functional/**/*.spec(.ts|.js)"],
+        "files": [
+          "tests/functional/**/*.spec(.ts|.js)"
+        ],
         "timeout": 60000
       }
     ]
   },
-  "testProviders": ["@japa/preset-adonis/TestsProvider"]
+  "testProviders": [
+    "@japa/preset-adonis/TestsProvider"
+  ]
 }
