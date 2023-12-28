@@ -22,7 +22,7 @@ export default class ModsController {
         .from('email.confirmation@creativeblogger.org')
         .to(target.email)
         .subject('Votre compte à été suspendu !')
-        .htmlView('emails/welcome', { name: 'Virk' })
+        .htmlView('emails/suspend', { name: target.username })
     })
 
 
