@@ -7,7 +7,10 @@ import Permissions from 'Contracts/Enums/Permissions'
 
 export default class PanelController {
   public async list({ request, auth }: HttpContextContract) {
-    if (auth.user?.permission !== Permissions.Moderator || Permissions.Administrator) {
+    if(!auth.user) {
+      throw new APIException("Vous n'êtes pas connectés !")
+    }
+    if (auth.user?.permission < Permissions.Moderator) {
       throw new APIException("Vous n'avez pas la permission requise", 401)
     }
     const data = await request.validate({
