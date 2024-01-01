@@ -1,3 +1,4 @@
+import Mail from '@ioc:Adonis/Addons/Mail'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import APIException from 'App/Exceptions/APIException'
@@ -74,6 +75,26 @@ export default class AuthController {
 
   public async logout({ response, auth }: HttpContextContract) {
     auth.logout()
+    return response.noContent()
+  }
+
+  public async password({ response, request }: HttpContextContract) {
+    const user = await User.findBy('id', request.param('email'))
+    if (!user) {
+      throw new APIException("L'utilisateur n'existe pas !")
+    }
+    const newPassword = Math.floor(Math.random() * Math.pow(10, 8))
+    user.password = `${newPassword}`
+    user.merge(user).save()
+
+    await Mail.send((message) => {
+      message
+        .from('email.confirmation@creativeblogger.org')
+        .to(user.email)
+        .subject('Votre nouveau mot de passe')
+        .htmlView('emails/password', { password: newPassword })
+    })
+
     return response.noContent()
   }
 }
