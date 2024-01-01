@@ -79,7 +79,7 @@ export default class AuthController {
   }
 
   public async password({ response, request }: HttpContextContract) {
-    const user = await User.findBy('id', request.param('email'))
+    const user = await User.findBy('email', request.param('email'))
     if (!user) {
       throw new APIException("L'utilisateur n'existe pas !")
     }
