@@ -25,9 +25,18 @@ export default class UsersController {
   }
 
   public async update({ request, response, auth }: HttpContextContract) {
-    const { email, username, password, biography } = request.only(['email', 'username', 'password', 'biography'])
+    const { email, username, password, biography } = request.only([
+      'email',
+      'username',
+      'password',
+      'biography',
+    ])
 
     const user = auth.user!
+
+    if (user.permission === -1) {
+      throw new APIException('Votre compte est suspendu ! Vous ne pouvez pas faire ça.')
+    }
 
     if (
       email &&
@@ -63,7 +72,7 @@ export default class UsersController {
 
     if (biography && biography.length <= 200) {
       user.biography = biography
-    } else if(biography.length > 200) {
+    } else if (biography.length > 200) {
       throw new APIException('La biographie ne peut excéder 200 caractères.')
     }
 
@@ -87,6 +96,10 @@ export default class UsersController {
 
     if (!user) {
       throw new APIException("Vous n'êtes pas identifiés !", 501)
+    }
+
+    if (user.permission === -1) {
+      throw new APIException('Votre compte est suspendu ! Vous ne pouvez pas faire ça.')
     }
 
     const fileName = `${auth.user!.id}.png`
@@ -131,6 +144,10 @@ export default class UsersController {
 
     if (!user) {
       throw new APIException("Vous n'êtes pas identifiés !", 501)
+    }
+
+    if (user.permission === -1) {
+      throw new APIException('Votre compte est suspendu ! Vous ne pouvez pas faire ça.')
     }
 
     try {
