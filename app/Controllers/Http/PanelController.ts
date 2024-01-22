@@ -7,7 +7,7 @@ import Permissions from 'Contracts/Enums/Permissions'
 
 export default class PanelController {
   public async list({ request, auth }: HttpContextContract) {
-    if(!auth.user) {
+    if (!auth.user) {
       throw new APIException("Vous n'êtes pas connectés !")
     }
     if (auth.user?.permission < Permissions.Moderator) {
@@ -42,7 +42,7 @@ export default class PanelController {
         'description',
         'author',
         'tags',
-        'views'
+        'views',
       ])
 
     if (data.limit && !data.page) {
@@ -65,7 +65,7 @@ export default class PanelController {
     const posts = await Post.query()
       .preload('author')
       .preload('comments', (query) => query.limit(20))
-      .where('ask_verif', '=', true)
+      .where('ask_verif', '=', 1)
       .select([
         'id',
         'title',
