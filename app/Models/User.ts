@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import Permissions from 'Contracts/Enums/Permissions'
+import Follow from './Follow'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -39,6 +40,16 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @hasMany(() => Follow, {
+    foreignKey: 'followerId',
+  })
+  public following: HasMany<typeof Follow>
+
+  @hasMany(() => Follow, {
+    foreignKey: 'followingId',
+  })
+  public followers: HasMany<typeof Follow>
 
   @beforeSave()
   public static async hashPassword(user: User) {
