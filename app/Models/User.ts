@@ -51,6 +51,12 @@ export default class User extends BaseModel {
   })
   public followers: HasMany<typeof Follow>
 
+  @column()
+  public inboxUrl: string
+
+  @column()
+  public publicKeyPem: string
+
   @beforeSave()
   public static async hashPassword(user: User) {
     if (user.$dirty.password) {

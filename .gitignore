@@ -6,3 +6,5 @@ coverage
 .env
 tmp
 .htaccess
+private.pem
+public.pem

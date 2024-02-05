@@ -126,12 +126,16 @@ export default class UsersController {
     }
 
     const actor = {
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      'id': user.id,
+      '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+      'id': user.id.toString(),
       'type': 'Person',
       'preferredUsername': user.username,
-      'inbox': `${request.url()}/inbox`, // Assurez-vous d'implémenter l'endpoint inbox
-      // Ajoutez d'autres propriétés d'acteur selon vos besoins
+      'inbox': `${request.url()}/inbox`,
+      'publicKey': {
+        id: `${request.url()}/inbox#main-key`,
+        owner: `${request.url()}/inbox`,
+        publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvsATXfA5fNdL4gyh2UsN\nWRqVNJK7ubzxRy+53Ir/XVbUJg1vvCHmrYJlX/L+jbUqPcGvuXoB1P9wxnWvuycH\njqYCy1HKD9BA4Wa/veZJoN51RJuHl/3TMUWjRnmlhjlhJedYAnq+ANppB2/RglQC\nGyOD1SyW8WeF9UVtq5Upz5VeId9A1+IGLsaUX1Zfj340KQzB0eB8QEbQZX6oFayw\ncobG1ivJlzOL0j5bDNyRQQCD09h1m8kepEb9Dp4EhilcbqZBKkiavgotNhYNCNCU\nEwIvMMLRDeIXdNAYqWexdwRIKsF5WZIWs7vbo+68hdqIfvkadVUNXA4kkrDAsRvL\nwQIDAQAB\n-----END PUBLIC KEY-----`,
+      },
     }
 
     return response.status(200).json(actor)
