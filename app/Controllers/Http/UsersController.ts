@@ -119,4 +119,32 @@ export default class UsersController {
     ;(await posts).map((post) => post.serializeAttributes({ omit: ['comments'] }))
     return await posts
   }
+  public async getActivityPubProfile({ response, request }: HttpContextContract) {
+    const user = await User.findBy('username', request.param('username'))
+    if (!user) {
+      throw new APIException('Utilisateur non trouvé !', 404)
+    }
+
+    const actor = {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      'id': user.id,
+      'type': 'Person',
+      'preferredUsername': user.username,
+      'inbox': `${request.url()}/inbox`, // Assurez-vous d'implémenter l'endpoint inbox
+      // Ajoutez d'autres propriétés d'acteur selon vos besoins
+    }
+
+    return response.status(200).json(actor)
+  }
+  public async handleActivityPubInbox({ request, params }: HttpContextContract) {
+    const { username } = params
+    const activity = request.body()
+
+    // Traitez l'activité reçue dans l'inbox
+    console.log(`Received activity for user ${username}:`, activity)
+
+    // Ajoutez une logique pour gérer différentes activités (Follow, Create, etc.)
+
+    return 'OK'
+  }
 }

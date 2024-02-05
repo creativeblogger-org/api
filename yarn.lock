@@ -3650,8 +3650,7 @@ http-errors@^2.0.0, http-errors@2.0.0:
 
 http-signature@~1.2.0:
   version "1.2.0"
-  resolved "https://registry.npmjs.org/http-signature/-/http-signature-1.2.0.tgz"
-  integrity sha512-CAbnr6Rz4CYQkLYUtSNXxQPUH2gK8f3iWexVlsnMeD+GjlsQ0Xsy1cOX+mN3dtxYomRy21CiOzU8Uhw6OwncEQ==
+  resolved "git+https://git@github.com/wmurphyrd/node-http-signature.git#9c02eeb45af7cbfc59dab927a2577a27c4fe7683"
   dependencies:
     assert-plus "^1.0.0"
     jsprim "^1.2.2"
