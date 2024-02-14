@@ -134,7 +134,8 @@ export default class UsersController {
       'publicKey': {
         id: `https://api.creativeblogger.org${request.url()}/inbox#main-key`,
         owner: `https://api.creativeblogger.org${request.url()}/inbox`,
-        publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvsATXfA5fNdL4gyh2UsN\nWRqVNJK7ubzxRy+53Ir/XVbUJg1vvCHmrYJlX/L+jbUqPcGvuXoB1P9wxnWvuycH\njqYCy1HKD9BA4Wa/veZJoN51RJuHl/3TMUWjRnmlhjlhJedYAnq+ANppB2/RglQC\nGyOD1SyW8WeF9UVtq5Upz5VeId9A1+IGLsaUX1Zfj340KQzB0eB8QEbQZX6oFayw\ncobG1ivJlzOL0j5bDNyRQQCD09h1m8kepEb9Dp4EhilcbqZBKkiavgotNhYNCNCU\nEwIvMMLRDeIXdNAYqWexdwRIKsF5WZIWs7vbo+68hdqIfvkadVUNXA4kkrDAsRvL\nwQIDAQAB\n-----END PUBLIC KEY-----`,
+        publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
+        `,
       },
     }
 
