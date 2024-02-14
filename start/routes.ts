@@ -5,6 +5,8 @@ Route.get('/', ({ response }: HttpContextContract) => {
   return response.json({ status: 'ok' })
 })
 
+Route.get('/.well-known/webfinger', 'WebFingersController.index')
+
 import './routes/@me'
 import './routes/auth'
 import './routes/comments'
