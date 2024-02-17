@@ -128,7 +128,11 @@ export default class UsersController {
     const actor = {
       '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
       'id': `https://api.creativeblogger.org/users/${user.username}`,
+      'acct': `${user.username}@api.creativeblogger.org`,
+      'url': `https://api.creativeblogger.org/users/${user.username}`,
       'type': 'Person',
+      'avatar': `${user.pp}`,
+      'avatar_static': `${user.pp}`,
       'preferredUsername': user.username,
       'inbox': `https://api.creativeblogger.org${request.url()}/inbox`,
       'publicKey': {
