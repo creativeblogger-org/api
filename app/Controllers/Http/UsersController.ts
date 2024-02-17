@@ -29,9 +29,9 @@ export default class UsersController {
     const actor = {
       '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
       'type': 'Person',
-      'id': `${user.id}`,
+      'id': `https://api.creativeblogger.org/users/${user.username}`,
+      'username': user.username,
       'acct': `${user.username}@api.creativeblogger.org`,
-      'preferredUsername': user.username,
       'display_name': `${user.username}`,
       'url': `https://api.creativeblogger.org/users/${user.username}`,
       'avatar': `${user.pp}`,
@@ -39,11 +39,20 @@ export default class UsersController {
       'note': `${user.biography}`,
       'note_text': `${user.biography}`,
       'created_at': `${user.createdAt}`,
-      'inbox': `https://api.creativeblogger.org${request.url()}/inbox`,
+      'inbox': `https://api.creativeblogger.org${request.url()}inbox`,
+      'outbox': `https://api.creativeblogger.org/${request.url()}outbox/`,
       'publicKey': {
-        id: `https://api.creativeblogger.org${request.url()}/inbox#main-key`,
-        owner: `https://api.creativeblogger.org${request.url()}/inbox`,
-        publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
+        id: `https://api.creativeblogger.org${request.url()}inbox#main-key`,
+        owner: `https://api.creativeblogger.org${request.url()}inbox`,
+        publicKeyPem: `-----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3
+        TKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5
+        CEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI
+        FM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1
+        nJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M
+        5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq
+        mQIDAQAB
+        -----END PUBLIC KEY-----
         `,
       },
     }
