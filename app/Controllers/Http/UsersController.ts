@@ -32,10 +32,12 @@ export default class UsersController {
       'id': `${user.id}`,
       'acct': `${user.username}@api.creativeblogger.org`,
       'preferredUsername': user.username,
+      'display_name': `${user.username}`,
       'url': `https://api.creativeblogger.org/users/${user.username}`,
       'avatar': `${user.pp}`,
       'avatar_static': `${user.pp}`,
       'note': `${user.biography}`,
+      'note_text': `${user.biography}`,
       'created_at': `${user.createdAt}`,
       'inbox': `https://api.creativeblogger.org${request.url()}/inbox`,
       'publicKey': {
@@ -156,6 +158,9 @@ export default class UsersController {
       'avatar': `${user.pp}`,
       'avatar_static': `${user.pp}`,
       'preferredUsername': user.username,
+      'display_name': `${user.username}`,
+      'note': `${user.biography}`,
+      'note_text': `${user.biography}`,
       'inbox': `https://api.creativeblogger.org${request.url()}/inbox`,
       'publicKey': {
         id: `https://api.creativeblogger.org${request.url()}/inbox#main-key`,
