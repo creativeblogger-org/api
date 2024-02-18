@@ -4,6 +4,7 @@ import APIException from 'App/Exceptions/APIException'
 import Post from 'App/Models/Post'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Permissions from 'Contracts/Enums/Permissions'
+import Mail from '@ioc:Adonis/Addons/Mail'
 
 export default class UsersController {
   public async list({ auth }: HttpContextContract) {
@@ -35,24 +36,17 @@ export default class UsersController {
       'display_name': `${user.username}`,
       'url': `https://api.creativeblogger.org/users/${user.username}`,
       'avatar': `${user.pp}`,
+      'inbox': `https://api.creativeblogger.org/users/${user.username}/inbox`,
+      'outbox': `https://api.creativeblogger.org/users/${user.username}/outbox`,
       'avatar_static': `${user.pp}`,
       'note': `${user.biography}`,
       'note_text': `${user.biography}`,
       'created_at': `${user.createdAt}`,
-      'inbox': `https://api.creativeblogger.org${request.url()}inbox`,
-      'outbox': `https://api.creativeblogger.org/${request.url()}outbox/`,
+      'icon': [`${user.pp}`],
       'publicKey': {
-        id: `https://api.creativeblogger.org${request.url()}inbox#main-key`,
-        owner: `https://api.creativeblogger.org${request.url()}inbox`,
-        publicKeyPem: `-----BEGIN PUBLIC KEY-----
-        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3
-        TKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5
-        CEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI
-        FM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1
-        nJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M
-        5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq
-        mQIDAQAB
-        -----END PUBLIC KEY-----
+        id: `https://api.creativeblogger.org${request.url()}actor`,
+        owner: `https://api.creativeblogger.org${request.url()}actor`,
+        publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
         `,
       },
     }
@@ -160,20 +154,23 @@ export default class UsersController {
 
     const actor = {
       '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-      'id': `https://api.creativeblogger.org/users/${user.username}`,
-      'acct': `${user.username}@api.creativeblogger.org`,
-      'url': `https://api.creativeblogger.org/users/${user.username}`,
       'type': 'Person',
-      'avatar': `${user.pp}`,
-      'avatar_static': `${user.pp}`,
-      'preferredUsername': user.username,
+      'id': `https://api.creativeblogger.org/users/${user.username}`,
+      'username': user.username,
+      'acct': `${user.username}@api.creativeblogger.org`,
       'display_name': `${user.username}`,
+      'url': `https://api.creativeblogger.org/users/${user.username}`,
+      'avatar': `${user.pp}`,
+      'inbox': `https://api.creativeblogger.org/users/${user.username}/inbox`,
+      'outbox': `https://api.creativeblogger.org/users/${user.username}/outbox`,
+      'avatar_static': `${user.pp}`,
       'note': `${user.biography}`,
       'note_text': `${user.biography}`,
-      'inbox': `https://api.creativeblogger.org${request.url()}/inbox`,
+      'created_at': `${user.createdAt}`,
+      'icon': [`${user.pp}`],
       'publicKey': {
-        id: `https://api.creativeblogger.org${request.url()}/inbox#main-key`,
-        owner: `https://api.creativeblogger.org${request.url()}/inbox`,
+        id: `https://api.creativeblogger.org${request.url()}actor`,
+        owner: `https://api.creativeblogger.org${request.url()}actor`,
         publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
         `,
       },
@@ -181,14 +178,41 @@ export default class UsersController {
 
     return response.status(200).json(actor)
   }
-  public async handleActivityPubInbox({ request, params }: HttpContextContract) {
-    const { username } = params
+  public async handleActivityPubInbox({ request }: HttpContextContract) {
+    const username = await User.findBy('username', request.param('username'))
+    if (!username) {
+      throw new APIException('Utilisateur non trouvé !', 404)
+    }
     const activity = request.body()
 
-    // Traitez l'activité reçue dans l'inbox
     console.log(`Received activity for user ${username}:`, activity)
 
-    // Ajoutez une logique pour gérer différentes activités (Follow, Create, etc.)
+    await Mail.send((message) => {
+      message
+        .from('email.confirmation@creativeblogger.org')
+        .to('eragon941@outlook.fr@proton.me')
+        .subject('Vous avez une notification !')
+        .htmlView('emails/inbox', { name: username, action: activity })
+    })
+
+    return 'OK'
+  }
+  public async handleActivityPubOutbox({ request }: HttpContextContract) {
+    const username = await User.findBy('username', request.param('username'))
+    if (!username) {
+      throw new APIException('Utilisateur non trouvé !', 404)
+    }
+    const activity = request.body()
+
+    console.log(`Received activity for user ${username}:`, activity)
+
+    await Mail.send((message) => {
+      message
+        .from('email.confirmation@creativeblogger.org')
+        .to('eragon941@outlook.fr@proton.me')
+        .subject('Vous avez une notification !')
+        .htmlView('emails/inbox', { name: username, action: activity })
+    })
 
     return 'OK'
   }

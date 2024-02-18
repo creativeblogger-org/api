@@ -8,6 +8,7 @@ Route.group(() => {
   Route.put('/upgrade/:username', 'UsersController.upgrade')
   Route.get('/:username/actor', 'UsersController.getActivityPubProfile')
   Route.post('/:username/actor/inbox', 'UsersController.handleActivityPubInbox')
+  Route.post('/:username/actor/outbox', 'UsersController.handleActivityPubOutbox')
   Route.group(() => {
     Route.post('/follow/:followerId/:followingId', 'FollowsController.follow')
     Route.delete('/unfollow/:followerId/:followingId', 'FollowsController.unfollow')
