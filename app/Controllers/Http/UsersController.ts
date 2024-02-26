@@ -159,6 +159,7 @@ export default class UsersController {
       'username': user.username,
       'acct': `${user.username}@api.creativeblogger.org`,
       'display_name': `${user.username}`,
+      'preferredUsername': `${user.username}`,
       'url': `https://api.creativeblogger.org/users/${user.username}`,
       'avatar': `${user.pp}`,
       'inbox': `https://api.creativeblogger.org/users/${user.username}/inbox`,
@@ -176,6 +177,7 @@ export default class UsersController {
       },
     }
 
+    response.safeHeader('Content-type', 'appliaction/activity+json')
     return response.status(200).json(actor)
   }
   public async handleActivityPubInbox({ request }: HttpContextContract) {
