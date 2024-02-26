@@ -52,7 +52,7 @@ export default class UsersController {
       },
     }
 
-    response.header('Content-type', 'appliaction/application+json')
+    response.header('Content-type', 'application/activity+json')
     return response.status(200).json(actor)
 
     // return user.serialize({
