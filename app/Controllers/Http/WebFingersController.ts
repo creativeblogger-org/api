@@ -30,10 +30,7 @@ export default class WebFingerController {
         ],
       }
 
-      response.safeHeader(
-        'Content-type',
-        'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'
-      )
+      response.header('Content-type', 'appliaction/activity+json')
       return response.json(webFingerResponse)
     } catch (error) {
       console.error(error)

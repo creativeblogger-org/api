@@ -52,10 +52,7 @@ export default class UsersController {
       },
     }
 
-    response.safeHeader(
-      'Content-type',
-      'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'
-    )
+    response.header('Content-type', 'appliaction/activity+json')
     return response.status(200).json(actor)
 
     // return user.serialize({
@@ -182,10 +179,7 @@ export default class UsersController {
       },
     }
 
-    response.safeHeader(
-      'Content-type',
-      'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'
-    )
+    response.header('Content-type', 'appliaction/activity+json')
     return response.status(200).json(actor)
   }
   public async handleActivityPubInbox({ request }: HttpContextContract) {
