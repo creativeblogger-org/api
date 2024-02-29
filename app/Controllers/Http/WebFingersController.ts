@@ -30,7 +30,6 @@ export default class WebFingerController {
         ],
       }
 
-      response.header('Content-type', 'application/activity+json')
       return response.json(webFingerResponse)
     } catch (error) {
       console.error(error)
