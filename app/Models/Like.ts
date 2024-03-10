@@ -1,5 +1,6 @@
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
+import Post from './Post'
 
 export default class Like extends BaseModel {
   @column({ isPrimary: true })
@@ -10,5 +11,6 @@ export default class Like extends BaseModel {
   public user: BelongsTo<typeof User>
 
   @column()
-  public post: number
+  @belongsTo(() => Post, { foreignKey: 'post' })
+  public post: BelongsTo<typeof Post>
 }

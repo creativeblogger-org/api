@@ -15,6 +15,7 @@ import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import Comment from './Comment'
 import HttpContext from '@ioc:Adonis/Core/HttpContext'
 import Permissions from 'Contracts/Enums/Permissions'
+import Like from './Like'
 
 export default class Post extends BaseModel {
   @column({ isPrimary: true })
@@ -63,6 +64,13 @@ export default class Post extends BaseModel {
   public comments: HasMany<typeof Comment>
 
   @column()
+  @hasMany(() => Like, {
+    foreignKey: 'post',
+    onQuery: (query) => query.preload('user').orderBy('created_at', 'desc'),
+  })
+  public like: HasMany<typeof Like>
+
+  @column()
   public content: string
 
   @column()
@@ -99,6 +107,10 @@ export default class Post extends BaseModel {
           author: {
             fields: { omit: ['email', 'updated_at', 'birthdate'] },
           },
+          user: {
+            fields: { omit: ['email', 'updated_at', 'birthdate'] },
+          },
+          like: { fields: { omit: ['post'] } },
           comments: { fields: { omit: ['post'] } },
         },
         false

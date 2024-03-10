@@ -325,7 +325,7 @@ export default class PostsController {
       }
 
       const like = new Like()
-      like.post = post.id
+      await like.related('post').associate(post)
       await like.related('user').associate(auth.user!)
       await like.save()
 
