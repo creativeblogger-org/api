@@ -8,6 +8,7 @@ import {
 } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import Post from './Post'
+import { DateTime } from 'luxon'
 
 export default class Like extends BaseModel {
   @column({ isPrimary: true })
@@ -20,6 +21,12 @@ export default class Like extends BaseModel {
   @column()
   @belongsTo(() => Post, { foreignKey: 'post' })
   public post: BelongsTo<typeof Post>
+
+  @column.dateTime({ autoCreate: true })
+  public createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  public updatedAt: DateTime
 
   public serialize(cherryPick?: CherryPick | undefined): ModelObject {
     return {

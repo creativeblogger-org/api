@@ -130,7 +130,7 @@ export default class UsersController {
         'created_at',
         'updated_at',
         'views',
-        'likes',
+        'likes_count',
         'image',
         'description',
         'author',

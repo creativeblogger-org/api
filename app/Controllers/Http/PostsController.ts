@@ -101,7 +101,7 @@ export default class PostsController {
         'description',
         'author',
         'tags',
-        'likes',
+        'likes_count',
       ])
 
     var nbOfPosts = await totalPosts.count('* as total')
