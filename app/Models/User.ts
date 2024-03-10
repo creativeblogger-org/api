@@ -41,15 +41,17 @@ export default class User extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
+  @column()
   @hasMany(() => Follow, {
     foreignKey: 'followerId',
   })
   public following: HasMany<typeof Follow>
 
+  @column()
   @hasMany(() => Follow, {
     foreignKey: 'followingId',
   })
-  public followersCount: HasMany<typeof Follow>
+  public followers: HasMany<typeof Follow>
 
   @beforeSave()
   public static async hashPassword(user: User) {

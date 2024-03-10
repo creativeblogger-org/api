@@ -5,6 +5,7 @@ import Post from 'App/Models/Post'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Permissions from 'Contracts/Enums/Permissions'
 import Mail from '@ioc:Adonis/Addons/Mail'
+import Follow from 'App/Models/Follow'
 
 export default class UsersController {
   public async list({ auth }: HttpContextContract) {
@@ -23,9 +24,18 @@ export default class UsersController {
     })
   }
 
-  public async get({ request }: HttpContextContract) {
+  public async get({ request, response }: HttpContextContract) {
     const user = await User.findBy('username', request.param('username'))
     if (!user) throw new APIException("L'utilisateur demandé est introuvable.", 404)
+
+    const followerCount = await Follow.query()
+      .where('followingId', user.id)
+      .count('* as total')
+      .firstOrFail()
+    const followingCount = await Follow.query()
+      .where('followerId', user.id)
+      .count('* as total')
+      .firstOrFail()
 
     // const actor = {
     //   '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
@@ -55,9 +65,17 @@ export default class UsersController {
     // response.header('Content-type', 'application/activity+json')
     // return response.status(200).json(actor)
 
-    return user.serialize({
+    const serializedUser = user.serialize({
       fields: {
         omit: ['email', 'password', 'birthdate', 'updated_at'],
+      },
+    })
+
+    return response.json({
+      user: {
+        ...serializedUser,
+        followerCount: followerCount['total'],
+        followingCount: followingCount['total'],
       },
     })
   }
