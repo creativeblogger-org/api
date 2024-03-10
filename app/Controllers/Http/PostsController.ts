@@ -115,6 +115,7 @@ export default class PostsController {
     const post = await Post.query()
       .preload('author')
       .preload('comments', (query) => query.limit(20))
+      .preload('like')
       .where('slug', '=', request.param('slug'))
       .select([
         'id',
@@ -129,7 +130,7 @@ export default class PostsController {
         'image',
         'description',
         'author',
-        'likes',
+        'likes_count',
         'views',
       ])
       .first()
