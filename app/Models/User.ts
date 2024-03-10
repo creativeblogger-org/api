@@ -51,7 +51,10 @@ export default class User extends BaseModel {
   @hasMany(() => Follow, {
     foreignKey: 'followingId',
   })
-  public followers: HasMany<typeof Follow>
+  public followersCount: HasMany<typeof Follow>
+
+  @column()
+  public followers: number
 
   @beforeSave()
   public static async hashPassword(user: User) {
