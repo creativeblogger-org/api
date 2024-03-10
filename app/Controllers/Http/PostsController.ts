@@ -226,7 +226,7 @@ export default class PostsController {
     post.is_verified = false
     post.ask_verif = false
     post.views = 0
-    post.likes = 0
+    post.likes_count = 0
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -329,10 +329,10 @@ export default class PostsController {
       await like.related('user').associate(auth.user!)
       await like.save()
 
-      post.likes += 1
+      post.likes_count += 1
       await post.save()
 
-      return post.likes
+      return post.likes_count
     }
   }
 
@@ -349,10 +349,10 @@ export default class PostsController {
 
       await existingLike.delete()
 
-      post.likes -= 1
+      post.likes_count -= 1
       await post.save()
 
-      return post.likes
+      return post.likes_count
     }
   }
 
