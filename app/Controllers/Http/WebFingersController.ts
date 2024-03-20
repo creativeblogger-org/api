@@ -27,9 +27,15 @@ export default class WebFingerController {
             type: 'application/activity+json',
             href: actorURI,
           },
+          {
+            rel: 'http://webfinger.net/rel/avatar',
+            type: 'image/png',
+            href: `${user.pp}`,
+          },
         ],
       }
 
+      response.header('content-type', 'application/jrd+json; charset=utf-8')
       return response.json(webFingerResponse)
     } catch (error) {
       console.error(error)
