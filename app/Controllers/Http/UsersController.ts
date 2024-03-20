@@ -179,7 +179,7 @@ export default class UsersController {
       },
     }
 
-    response.header('content-type', 'application/json; charset=utf-8')
+    response.header('content-type', 'application/activity+json')
     return response.status(200).json(actor)
   }
   public async handleActivityPubInbox({ request }: HttpContextContract) {
