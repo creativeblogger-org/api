@@ -157,12 +157,12 @@ export default class UsersController {
     const actor = {
       '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
       'type': 'Person',
-      'id': `https://api.creativeblogger.org/users/${user.username}`,
+      'id': `https://api.creativeblogger.org/users/${user.username}/actor`,
       'username': user.username,
       'acct': `${user.username}@api.creativeblogger.org`,
       'display_name': `${user.username}`,
       'preferredUsername': `${user.username}`,
-      'url': `https://api.creativeblogger.org/users/${user.username}`,
+      'url': `https://api.creativeblogger.org/users/${user.username}/actor`,
       'avatar': `${user.pp}`,
       'inbox': `https://api.creativeblogger.org/users/${user.username}/inbox`,
       'outbox': `https://api.creativeblogger.org/users/${user.username}/outbox`,
@@ -172,14 +172,14 @@ export default class UsersController {
       'created_at': `${user.createdAt}`,
       'icon': [`${user.pp}`],
       'publicKey': {
-        id: `https://api.creativeblogger.org${user.username}/actor`,
-        owner: `https://api.creativeblogger.org/users/${user.username}`,
+        id: `https://api.creativeblogger.org/users/${user.username}/actor`,
+        owner: `https://api.creativeblogger.org/users/${user.username}/actor`,
         publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
         `,
       },
     }
 
-    response.header('Content-type', 'application/activity+json')
+    response.header('content-type', 'application/json; charset=utf-8')
     return response.status(200).json(actor)
   }
   public async handleActivityPubInbox({ request }: HttpContextContract) {
