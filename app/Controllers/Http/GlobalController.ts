@@ -58,7 +58,6 @@ export default class GlobalController {
         'created_at',
         'updated_at',
         'views',
-        'likes_count',
         'image',
         'description',
         'author',

@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import APIException from 'App/Exceptions/APIException'
 import User from 'App/Models/User'
+import Env from '@ioc:Adonis/Core/Env'
 
 export default class WebFingerController {
   public async index({ request, response }: HttpContextContract) {
@@ -16,7 +17,7 @@ export default class WebFingerController {
       }
 
       // Construire l'URI de l'acteur ActivityPub
-      const actorURI = `https://api.creativeblogger.org/users/${username}/actor`
+      const actorURI = `${Env.get('API')}/users/${username}/actor`
 
       // Construire la réponse WebFinger
       const webFingerResponse = {

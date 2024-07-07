@@ -101,7 +101,6 @@ export default class PostsController {
         'description',
         'author',
         'tags',
-        'likes_count',
       ])
 
     var nbOfPosts = await totalPosts.count('* as total')
@@ -115,7 +114,7 @@ export default class PostsController {
     const post = await Post.query()
       .preload('author')
       .preload('comments', (query) => query.limit(20))
-      .preload('like')
+      // .preload('like')
       .where('slug', '=', request.param('slug'))
       .select([
         'id',
@@ -130,7 +129,6 @@ export default class PostsController {
         'image',
         'description',
         'author',
-        'likes_count',
         'views',
       ])
       .first()
@@ -227,7 +225,6 @@ export default class PostsController {
     post.is_verified = false
     post.ask_verif = false
     post.views = 0
-    post.likes_count = 0
     await post.related('author').associate(auth.user!)
     await post.save()
 
@@ -330,10 +327,9 @@ export default class PostsController {
       await like.related('user').associate(auth.user!)
       await like.save()
 
-      post.likes_count += 1
       await post.save()
 
-      return post.likes_count
+      return post.like
     }
   }
 
@@ -350,10 +346,9 @@ export default class PostsController {
 
       await existingLike.delete()
 
-      post.likes_count -= 1
       await post.save()
 
-      return post.likes_count
+      return post.like
     }
   }
 

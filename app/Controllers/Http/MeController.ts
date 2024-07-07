@@ -6,6 +6,7 @@ import User from 'App/Models/User'
 import fs from 'fs/promises'
 import sharp from 'sharp'
 import Permissions from 'Contracts/Enums/Permissions'
+import Env from '@ioc:Adonis/Core/Env'
 
 export default class UsersController {
   public async me({ auth }: HttpContextContract) {
@@ -117,7 +118,7 @@ export default class UsersController {
 
       await fs.unlink(Application.tmpPath() + '/' + fileName)
 
-      user.pp = 'https://api.creativeblogger.org/public/users/' + fileName
+      user.pp = `${Env.get('API')}/public/users/${fileName}`
       await user.save()
 
       return response.ok({ resizedImagePath })
@@ -135,7 +136,7 @@ export default class UsersController {
 
       return response.download(imagePath)
     } catch (error) {
-      throw new APIException("L'image n'a pas été trouvée...", 404)
+      throw new APIException(`L'image ${error} n'a pas été trouvée...`, 404)
     }
   }
 

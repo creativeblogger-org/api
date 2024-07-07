@@ -3,6 +3,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import APIException from 'App/Exceptions/APIException'
 import User from 'App/Models/User'
+import Env from '@ioc:Adonis/Core/Env'
+import Application from '@ioc:Adonis/Core/Application'
 
 export default class AuthController {
   public async register({ request, auth }: HttpContextContract) {
@@ -89,10 +91,22 @@ export default class AuthController {
 
     await Mail.send((message) => {
       message
-        .from('email.confirmation@creativeblogger.org')
+        .from(Env.get('SMTP_USERNAME'))
         .to(user.email)
+        .embed(Application.publicPath('logo2.png'), 'logo')
+        .embed(Application.publicPath('insta.png'), 'insta')
+        .embed(Application.publicPath('discord.png'), 'discord')
+        .embed(Application.publicPath('element.png'), 'element')
+        .embed(Application.publicPath('github.png'), 'github')
+        .embed(Application.publicPath('mastodon.svg'), 'mastodon')
+        .embed(Application.publicPath('twitter.png'), 'twitter')
+        .embed(Application.publicPath('youtube.png'), 'youtube')
         .subject('Votre nouveau mot de passe')
-        .htmlView('emails/password', { password: newPassword })
+        .htmlView('emails/password', {
+          password: newPassword,
+          api: Env.get('API'),
+          platformName: Env.get('PLATFORM_NAME'),
+        })
     })
 
     return response.noContent()

@@ -3,6 +3,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import APIException from 'App/Exceptions/APIException'
 import User from 'App/Models/User'
 import Permissions from 'Contracts/Enums/Permissions'
+import Env from '@ioc:Adonis/Core/Env'
+import Application from '@ioc:Adonis/Core/Application'
 
 export default class ModsController {
   public async suspend({ auth, request, response }: HttpContextContract) {
@@ -22,10 +24,22 @@ export default class ModsController {
 
     await Mail.send((message) => {
       message
-        .from('email.confirmation@creativeblogger.org')
+        .from(Env.get('SMTP_USERNAME'))
         .to(target.email)
+        .embed(Application.publicPath('logo2.png'), 'logo')
+        .embed(Application.publicPath('insta.png'), 'insta')
+        .embed(Application.publicPath('discord.png'), 'discord')
+        .embed(Application.publicPath('element.png'), 'element')
+        .embed(Application.publicPath('github.png'), 'github')
+        .embed(Application.publicPath('mastodon.svg'), 'mastodon')
+        .embed(Application.publicPath('twitter.png'), 'twitter')
+        .embed(Application.publicPath('youtube.png'), 'youtube')
         .subject('Votre compte à été suspendu !')
-        .htmlView('emails/suspend', { name: target.username })
+        .htmlView('emails/suspend', {
+          name: target.username,
+          api: Env.get('API'),
+          platformName: Env.get('PLATFORM_NAME'),
+        })
     })
 
     return response.noContent()
@@ -47,10 +61,22 @@ export default class ModsController {
 
     await Mail.send((message) => {
       message
-        .from('email.confirmation@creativeblogger.org')
+        .from(Env.get('SMTP_USERNAME'))
         .to(target.email)
+        .embed(Application.publicPath('logo2.png'), 'logo')
+        .embed(Application.publicPath('insta.png'), 'insta')
+        .embed(Application.publicPath('discord.png'), 'discord')
+        .embed(Application.publicPath('element.png'), 'element')
+        .embed(Application.publicPath('github.png'), 'github')
+        .embed(Application.publicPath('mastodon.svg'), 'mastodon')
+        .embed(Application.publicPath('twitter.png'), 'twitter')
+        .embed(Application.publicPath('youtube.png'), 'youtube')
         .subject("Votre compte n'est plus suspendu !")
-        .htmlView('emails/unsuspend', { name: target.username })
+        .htmlView('emails/unsuspend', {
+          name: target.username,
+          api: Env.get('API'),
+          platformName: Env.get('PLATFORM_NAME'),
+        })
     })
 
     return response.noContent()

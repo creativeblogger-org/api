@@ -16,4 +16,10 @@ export default Env.rules({
 
   DISCORD_CLIENT_ID: Env.schema.string(),
   DISCORD_CLIENT_SECRET: Env.schema.string(),
+
+  API: Env.schema.string(),
+
+  SMTP_USERNAME: Env.schema.string(),
+
+  PLATFORM_NAME: Env.schema.string(),
 })

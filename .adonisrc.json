@@ -19,9 +19,7 @@
     "./start/kernel",
     {
       "file": "./start/validator",
-      "environment": [
-        "web"
-      ]
+      "environment": ["web"]
     }
   ],
   "providers": [
@@ -34,27 +32,39 @@
     "@adonisjs/mail",
     "@adonisjs/view"
   ],
-  "aceProviders": [
-    "@adonisjs/repl"
-  ],
+  "aceProviders": ["@adonisjs/repl"],
   "tests": {
     "suites": [
       {
         "name": "functional",
-        "files": [
-          "tests/functional/**/*.spec(.ts|.js)"
-        ],
+        "files": ["tests/functional/**/*.spec(.ts|.js)"],
         "timeout": 60000
       }
     ]
   },
-  "testProviders": [
-    "@japa/preset-adonis/TestsProvider"
-  ],
+  "testProviders": ["@japa/preset-adonis/TestsProvider"],
   "metaFiles": [
     {
       "pattern": "resources/views/**/*.edge",
       "reloadServer": false
+    },
+    {
+      "pattern": "public/**",
+      "reloadServer": false
     }
-  ]
+  ],
+  "directories": {
+    "config": "config",
+    "public": "public",
+    "contracts": "contracts",
+    "providers": "providers",
+    "database": "database",
+    "migrations": "database/migrations",
+    "seeds": "database/seeders",
+    "resources": "resources",
+    "views": "resources/views",
+    "start": "start",
+    "tmp": "tmp",
+    "tests": "tests"
+  }
 }

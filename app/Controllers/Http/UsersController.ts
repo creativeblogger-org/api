@@ -23,43 +23,43 @@ export default class UsersController {
     })
   }
 
-  public async get({ request, response }: HttpContextContract) {
+  public async get({ request }: HttpContextContract) {
     const user = await User.findBy('username', request.param('username'))
     if (!user) throw new APIException("L'utilisateur demandé est introuvable.", 404)
 
-    const actor = {
-      '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-      'type': 'Person',
-      'id': `https://api.creativeblogger.org/users/${user.username}`,
-      'username': user.username,
-      'acct': `${user.username}@api.creativeblogger.org`,
-      'display_name': `${user.username}`,
-      'preferredUsername': `${user.username}`,
-      'url': `https://api.creativeblogger.org/users/${user.username}`,
-      'avatar': `${user.pp}`,
-      'inbox': `https://api.creativeblogger.org/users/${user.username}/inbox`,
-      'outbox': `https://api.creativeblogger.org/users/${user.username}/outbox`,
-      'avatar_static': `${user.pp}`,
-      'note': `${user.biography}`,
-      'note_text': `${user.biography}`,
-      'created_at': `${user.createdAt}`,
-      'icon': [`${user.pp}`],
-      'publicKey': {
-        id: `https://api.creativeblogger.org${user.username}/actor`,
-        owner: `https://api.creativeblogger.org/users/${user.username}`,
-        publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
-        `,
-      },
-    }
-
-    response.header('content-type', 'application/activity+json')
-    return response.status(200).json(actor)
-
-    // return user.serialize({
-    //   fields: {
-    //     omit: ['email', 'password', 'birthdate', 'updated_at'],
+    // const actor = {
+    //   '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+    //   'type': 'Person',
+    //   'id': `https://api.creativeblogger.org/users/${user.username}`,
+    //   'username': user.username,
+    //   'acct': `${user.username}@api.creativeblogger.org`,
+    //   'display_name': `${user.username}`,
+    //   'preferredUsername': `${user.username}`,
+    //   'url': `https://api.creativeblogger.org/users/${user.username}`,
+    //   'avatar': `${user.pp}`,
+    //   'inbox': `https://api.creativeblogger.org/users/${user.username}/inbox`,
+    //   'outbox': `https://api.creativeblogger.org/users/${user.username}/outbox`,
+    //   'avatar_static': `${user.pp}`,
+    //   'note': `${user.biography}`,
+    //   'note_text': `${user.biography}`,
+    //   'created_at': `${user.createdAt}`,
+    //   'icon': [`${user.pp}`],
+    //   'publicKey': {
+    //     id: `https://api.creativeblogger.org${user.username}/actor`,
+    //     owner: `https://api.creativeblogger.org/users/${user.username}`,
+    //     publicKeyPem: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrhGiKRbPMyHNTbBuFc3\nTKlAXzYoFNr3JnS+PzqBfwtFi+wHBrEGktjaG0LDQWzQZoWk1ovPOvUwBcUolrK5\nCEcpMKgETzLiynQFz3QpVvtW0furg02T28L7CVnELNYSgHaw60gzpjAwkGTWsUAI\nFM6mRB6lK+EACbs6egJNaRjcHuUaJO78QUvsF/9cfIUmB3qF8XDMnrOLTfDVuRb1\nnJyVcj/0/MZEO2V5EYA323ekh5avgX1y0Ig7mxPoQhrRen1plhuUps8VI6pP224M\n5SHHQ+wWHr/JzVc60EPPHquI7K9dMf3jXfWOf0vTDetU6TvZkBEJSUMqr7j42+vq\nmQIDAQAB\n-----END PUBLIC KEY-----
+    //     `,
     //   },
-    // })
+    // }
+
+    // response.header('content-type', 'application/activity+json')
+    // return response.status(200).json(actor)
+
+    return user.serialize({
+      fields: {
+        omit: ['email', 'password', 'birthdate', 'updated_at'],
+      },
+    })
   }
 
   public async delete({ request, response, auth }: HttpContextContract) {
@@ -130,7 +130,6 @@ export default class UsersController {
         'created_at',
         'updated_at',
         'views',
-        'likes_count',
         'image',
         'description',
         'author',

@@ -1,0 +1,37 @@
+
+      <rss version="2.0">
+        <channel>
+          <title>Creative Blogger</title>
+          <link>https://creativeblogger.org</link>
+          <description>Projet collaboratif entre bloggers</description>
+          <lastBuildDate>Fri, 21 Jun 2024 12:59:12 GMT</lastBuildDate>
+          <image>
+            <url>https://creativeblogger.org/assets/logo2-0c8c0aee.png</url>
+            <title>BDM</title>
+            <link>https://creativeblogger.org</link>
+            <width>32</width>
+            <height>32</height>
+          </image> 
+          
+          <item>
+            <title>Tester</title>
+            <link>https://creativeblogger.org/posts/tester</link>
+            <description><![CDATA[
+            <div style="display: flex; align-items: center;">
+             <div style="margin-right: 10px;">
+              <img src="http://localhost:3333/public/posts/TUOT.png" alt="Tester" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+             </div>
+             <div>
+              <h2>Ceci est un article de test</h2>
+             </div>
+            </div>
+            ]]>
+            </description>
+            <pubDate>2024-06-21T14:59:11.000+02:00</pubDate>
+            <author><![CDATA[undefined]]></author>
+            <category><![CDATA[news]]></category>
+          </item>
+        
+        </channel>
+      </rss>
+    
